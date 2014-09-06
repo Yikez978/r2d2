@@ -23,6 +23,14 @@ Also resolves the vendor OUI from the MAC address to aid in tracking down the de
 The found devices can be whitelisted or blacklisted to indicate that they have been previously
 investigated and their status determined.
 
+##Setup
+Edit r2d2.pl to:
+* define the DHCP server(s) to poll.
+* define the AD domain controllers and domain which house the computer elements.
+r2d2 needs to be run under an account that has permissions to access the DHCP server
+via the netsh command.  You may need to run 'netsh add helper dhcpmon.dll' for dhcp
+commands to work the first time.
+
 ##How to Run
 ```
 Edit the script near the top to:
@@ -46,6 +54,7 @@ NOTE: May need to run 'netsh add helper dhcpmon.dll' for dhcp commands to work t
       Need Microsoft's dsquery.exe to get computer and printer names from AD.
 ```
 ##TODO (the old list, in no particular order)
+* Move setup vaiables to a config file
 * Use a real database instead of flat files
 *	Add timestamp to entries for inclusion in a db
 *	Find rogues with reservations to check if they are active 
