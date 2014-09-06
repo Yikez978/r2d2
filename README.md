@@ -27,7 +27,7 @@ investigated and their status determined.
 Edit r2d2.pl to:
 * define the DHCP server(s) to poll.
 * define the AD domain controllers and domain which house the computer elements.
-r2d2 needs to be run under an account that has permissions to access the DHCP server
+* r2d2 needs to be run under an account that has permissions to access the DHCP server
 via the netsh command.  You may need to run 'netsh add helper dhcpmon.dll' for dhcp
 commands to work the first time.
 
