@@ -32,6 +32,13 @@ r2d2 needs to be run under an account that has permissions to access the DHCP se
 via the netsh command.  You may need to run 'netsh add helper dhcpmon.dll' for dhcp
 commands to work the first time.
 
+The SCCM server needs to be defined and a report that takes a MAC and returns, uh,
+something I don't remember now...  Will be updating this part...
+Search for the following and and fix it:
+http://sccm/sccm/Report.asp?ReportID=37&variable=$mac
+
+Run the script once with the --update option to get the latest MAC OUIs from IEEE.
+
 ##How to Run
 ```
 Edit the script near the top to:
