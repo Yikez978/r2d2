@@ -1,0 +1,127 @@
+import-module activedirectory
+
+$HQComputers = get-adcomputer -filter * -SearchBase "OU=XXX,OU=YYY,OU=ZZZ" | ForEach-Object {$_.DNSHostName}
+$OU = "HQ"
+# $HQWhiteList = import-csv whitelist.csv | ForEach-Object {$_.DNSHostName}
+
+
+function Get-OS {
+  Param ([string]$computername = $(Throw "You must specify a computername."))
+  $wmi=Get-WmiObject Win32_OperatingSystem -computername $computername -ea stop
+
+  write $wmi
+}
+
+function Check-Port {
+  Param ([String]$unkserver = $(Throw "You must specify a computername."),[String]$port=$(Throw "You must specify a port"))
+  $socket = new-object Net.Sockets.TcpClient
+  try {
+    $socket.Connect($unkserver,$port)
+    if ($socket.Connected) {
+      $status = "Open"
+      $socket.Close()
+      }
+    else {
+      $status = "Closed"
+    }
+  }
+  catch {
+    #[system.exception]
+    $status = "Closed"
+  }
+  write $status
+}
+#
+
+function Check-Perms {
+  Param ([string]$computername = $(Throw "You must specify a computername."))
+}              
+
+$OutArray = @()
+$ScopeIP = dhcp.server.ip
+
+
+
+get-dhcpserverv4scope -ComputerName dhcp.server.ip | Where-Object {$_.State -eq "Active"} | ForEach-Object {
+  #$filename1 = [string]$_.ScopeId + ".csv"
+  $Scope = [string]$_.ScopeId
+  Write-Host "Now checking" $Scope
+  get-dhcpserverv4lease -ComputerName dhcp.server.ip -scopeid $_.ScopeId -Allleases | Where-Object {$_.AddressState -eq "Active"} | ForEach-Object {
+    $IP = [string]$_.IPAddress
+    $HostName = [string]$_.HostName
+    $AD_check = $HQComputers -contains $_.HostName 
+    # $WL_check = $HQWhiteList -contains $_.Hostname 
+    # if ($AD_check) { Write-Host $_.IPAddress "with hosthame" $_.HostName "is in AD"}
+    # else {Write-Host $_.IPAddress "with hosthame" $_.HostName "is NOT in AD"}
+    $ping_check = test-connection -computername $_.IPAddress -quiet -Count 1
+    if ($ping_check) { 
+      $rogue_status = "Active Rogue"
+      #Write-Host $_.IPAddress "with hosthame" $_.HostName "is alive"
+      }
+    else { 
+      $rogue_status = "Inactive Rogue"
+      #Write-Host $_.IPAddress "with hosthame" $_.HostName "is dead"
+      }
+    $webserver = $hbss = $encase = "N/A"  #-and $ping_check
+    if ((-Not $AD_check) -and (-Not $WL_check)) {
+      $webserver = Check-Port $computer 80
+      #write-host $computer $webserver
+      $hbss = Check-Port $computer 591
+      #write-host $computer @hbss
+      $encase = Check-Port $computer 4445
+    $myobj = "" | Select "RogueStatus","Scope","IP","DNSHostName","AD","Ping","Port80","HBSS","Encase","Notes"
+    $myobj.RogueStatus = $rogue_status
+    $myobj.Scope = $Scope
+    $myobj.IP = $IP
+    $myobj.DNSHostName = $HostName
+    $myobj.AD = $AD_check
+    $myobj.Ping = $ping_check
+    $myobj.Port80 = $webserver
+    $myobj.HBSS = $hbss
+    $myobj.Encase = $encase
+    $myobj.Notes = ""
+    
+    $OutArray += $myobj
+
+    $myobj = $null
+    }
+  #Write-Host $filename1
+
+    }
+  }
+
+# $enddate = (get-date).tostring("ddMMyyyy")
+# $filename = 'Possible_rogues_' + $enddate + '.csv'
+# $outarray | export-csv $filename
+
+$Header = "CEF:0"
+$DVendor = "HomeGrown NetworkView"
+$DProduct = "DHCP Rogues"
+$DVersion = "1.0"
+$SigID = "1"
+$targethost = "ArcSight Agent IP"
+$udpclient = ""
+
+write-host "Now sending rogues found to SIEM"
+
+foreach ($element in $OutArray) {
+  #write-host "The rogue status of" $element.DNSHostName "is" $element.RogueStatus
+  if ($element.RogueStatus -eq "Inactive Rogue") { 
+    $Severity = "6"
+    $msg = "An rogue machine has been identified with a DHCP lease but is not active on the network at the time of this event."
+    }
+  if ($element.RogueStatus -eq "Active Rogue") { 
+    $Severity = "8"
+    $msg = "An rogue machine has been identified with a DHCP lease and is ACTIVELY on the network at the time of this event."
+    }
+  $CEF = $Header +"|"+ $DVendor +"|"+ $DProduct +"|"+ $DVersion +"|"+ $SigID +"|"+ $element.RogueStatus +"|"+ $Severity +"|"+ " msg=" + $msg + " shost=" + $element.DNSHostName + " src=" + $element.IP + " cs1Label=Port80 cs1=" + $element.Port80 + " cs2Label=HBSS cs2=" + $element.HBSS + " dntdom=" + $OU + " dst=" + $ScopeIP #+ "cs3Label=Encase cs3=" $element.Encase + ""
+  #write-host $CEF
+  $udpclient = new-object net.sockets.udpclient #(514)
+  start-sleep -s 1
+  $udpclient.connect($targethost,514)
+  start-sleep -s 1
+  $a = new-object system.text.asciiencoding
+  $bytes = $a.getbytes($CEF)
+  $udpclient.send($bytes,$bytes.length)
+  $udpclient.close()
+  }
