@@ -87,4 +87,4 @@ it down.  A couple of jobs later, there was a similar need but a different envir
 The old script could not be used so I started over and r2d2 is the result of that effort.
 A friend and former coworker encouraged me to publish it.  He took over the care
 and feeding of r2d2 when I left that esteemed position.  He has even ported it to
-Powershell and has graciously provided it (soon to be) here as well.
+Powershell and has graciously provided it here as well.
