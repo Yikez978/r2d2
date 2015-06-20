@@ -4,7 +4,7 @@ r2d2
 ##Remote Rogue Device Detector
 The need to detect rogue devices on a network is part of the first control listed in the
 [SANS top 20 Critical Security Controls](http://www.sans.org/critical-security-controls).
-The Remote Rogue Device Detection gathers data from various sources to compile a list
+The Remote Rogue Device Detector gathers data from various sources to compile a list
 of potential rogue devices.
 
 Originally designed to run on a Windows network, it uses:
@@ -32,8 +32,8 @@ r2d2 needs to be run under an account that has permissions to access the DHCP se
 via the netsh command.  You may need to run 'netsh add helper dhcpmon.dll' for dhcp
 commands to work the first time.
 
-The SCCM server needs to be defined and a report that takes a MAC and returns, uh,
-something I don't remember now...  Will be updating this part...
+The report that is generated includes a link to an SCCM server report that takes
+a MAC and returns what it knows, if anything, about that MAC.
 Search for the following and and fix it:
 http://sccm/sccm/Report.asp?ReportID=37&variable=$mac
 
@@ -49,11 +49,11 @@ perl r2d2.pl
 
 Options:
 	--sleep		time in seconds to wait to run again after completing.
-			Default is 0 = run once and exit.  Max is 86400 (24 hours).
+			      Default is 0 = run once and exit.  Max is 86400 (24 hours).
 	--verbose	print additional info to screen while running
 	--update	update the vendor.txt file and exit
 	--listall	save all computer and printer names, DCHP scopes and leases
-			while otherwise running the script normally.
+			      while otherwise running the script normally.
 	--help		print this help and exit
 
 When run continously, only new devices are reported.
