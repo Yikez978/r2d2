@@ -128,6 +128,7 @@ sub loadVendorCodes {
   } else { &printandpush("Failed to load the vendor codes\n"); }
   close VENDOR;
 }
+
 sub getvendor {
   my $mac = shift;
 
