@@ -47,10 +47,10 @@ foreach $server (@dhcpservers) { # check that the server IP is a valid format
   $ok = 0;
   unless ($server =~ /[^\d\.]/g) {
     if ($server =~ /(.+)\.(.+)\.(.+)\.(.+)/) {
-      if ($1 >= 1 && $1 <= 255) {
-        if ($2 >= 1 && $2 <= 255) {
-          if ($3 >= 1 && $3 <= 255) {
-            if ($4 >= 1 && $4 <= 255) {
+      if ($1 >= 0 && $1 <= 255) {
+        if ($2 >= 0 && $2 <= 255) {
+          if ($3 >= 0 && $3 <= 255) {
+            if ($4 >= 0 && $4 <= 255) {
               $ok = 1;
             }
           }
