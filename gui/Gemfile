@@ -30,11 +30,13 @@ gem 'bcrypt', '~> 3.1.7'
 # gem 'capistrano-rails', group: :development
 
 group :development, :test do
+  gem 'spring-commands-rspec'
   gem 'rspec-rails'
   gem 'guard-rspec'
-  gem 'spork-rails', github: 'sporkrb/spork-rails'
-  gem 'guard-spork'
-  gem 'childprocess'
+  gem 'rb-fsevent' if `uname` =~ /Darwin/
+#  gem 'spork-rails', github: 'sporkrb/spork-rails'
+#  gem 'guard-spork'
+#  gem 'childprocess'
 # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
 
@@ -49,6 +51,6 @@ group :test do
   gem 'selenium-webdriver'
   gem 'capybara'
   gem 'factory_girl_rails'
-  gem 'cucumber-rails'
+  gem 'cucumber-rails', :require => false
   gem 'database_cleaner', github: 'bmabey/database_cleaner'
 end
