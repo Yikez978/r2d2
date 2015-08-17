@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
-  # root 'welcome#index'
-  get "home_pages" => 'home_pages#index'
-  get "home_pages/r2d2" => 'r2d2#index'
+  root 'devices#index'
+  get "home_pages/r2d2" => 'home_pages#r2d2'
+  get "home_pages/l2s2" => 'home_pages#l2s2'
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 

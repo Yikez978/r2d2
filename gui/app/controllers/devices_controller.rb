@@ -1,4 +1,4 @@
-class HomePagesController < ApplicationController
+class DevicesController < ApplicationController
   def index
     @devices = Device.paginate(page: params[:page])
   end

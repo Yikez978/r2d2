@@ -6,9 +6,23 @@
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
 </head>
+
 <body>
-
-<%= yield %>
-
+  <header class="navbar navbar-fixed-top navbar-inverse">
+    <div class='container'>
+      <%= link_to "Remote Rogue Device Detector", '#', id: "logo" %>
+      <div class="container">
+        <nav>
+          <ul class="nav navbar-nav navbar-right">
+            <li><%= link_to 'Go to r2d2 Home', '/home_pages/r2d2' %></li>
+            <li><%= link_to 'Go to l2s2 Home', '/home_pages/l2s2' %></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </header>
+  <div class='container'>
+    <%= yield %>
+  </div>
 </body>
 </html>
