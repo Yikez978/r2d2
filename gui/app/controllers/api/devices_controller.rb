@@ -14,7 +14,10 @@ module API
       device = Device.new(device_params)
       if device.save
         render json: device, status: 201
+      else
+        render json: device.errors, status: 422 # :unprocessable_entity
       end
+      
     end
     
     private

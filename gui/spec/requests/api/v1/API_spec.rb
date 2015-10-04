@@ -37,20 +37,53 @@ RSpec.describe "API" do
   end
 
   describe 'POST /devices' do
-    before(:each) do
+    describe 'when successful' do
+      before(:each) do
+        post 'http://api.example.com/devices/',
+          { device:
+            { mac: '00:11:22:33:44:55', ip: '1.1.1.1' }
+          }.to_json,
+          { 'Accept' => Mime::JSON, 'Content-Type' => Mime::JSON.to_s }
+      end
+  
+      it 'should return status 201' do
+        expect(response).to be_created
+      end
+  
+      it 'should create a device'do
+        expect(Device.find_by_mac('00:11:22:33:44:55')).to be_valid
+      end
+    end
+  end
+  describe 'when unsuccessful' do
+    it 'should return 422 for nil mac' do
       post 'http://api.example.com/devices/',
         { device:
-          { mac: '00:11:22:33:44:55', ip: '1.1.1.1' }
+          { mac: nil, ip: '1.1.1.1' }
         }.to_json,
         { 'Accept' => Mime::JSON, 'Content-Type' => Mime::JSON.to_s }
+        
+      expect(status).to eq(422)
     end
 
-    it 'should return status 201' do
-      expect(response).to be_created
+    it 'should return 422 for nil IP' do
+      post 'http://api.example.com/devices/',
+        { device:
+          { mac: '00:11:22:33:44:55', ip: nil }
+        }.to_json,
+        { 'Accept' => Mime::JSON, 'Content-Type' => Mime::JSON.to_s }
+        
+      expect(status).to eq(422)
     end
 
-    it 'should create a device'do
-      expect(Device.find_by_mac('00:11:22:33:44:55')).to be_valid
+    it 'should return 422 for nil IP and nil mac' do
+      post 'http://api.example.com/devices/',
+        { device:
+          { mac: nil, ip: nil }
+        }.to_json,
+        { 'Accept' => Mime::JSON, 'Content-Type' => Mime::JSON.to_s }
+        
+      expect(status).to eq(422)
     end
   end
 end
