@@ -17,6 +17,7 @@
 /tmp
 
 # Ignore other unneeded files.
+/vendor
 doc/
 *.swp
 *~
