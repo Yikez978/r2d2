@@ -2,7 +2,8 @@ module API
   class SweepsController < ApplicationController
     def create
       sweep = Sweep.new(sweep_params)
-      if sweep.save
+      if sweep.valid?
+        sweep.save
         render json: sweep, status: 201
       else
         render json: sweep.errors, status: 422 # :unprocessable_entity
@@ -11,7 +12,7 @@ module API
     
     private
       def sweep_params
-        params.require(:sweep).permit(:mac, :ip)
+        params.require(:sweep).permit(devices_attributes: [:mac, :ip])
       end
   end
 end

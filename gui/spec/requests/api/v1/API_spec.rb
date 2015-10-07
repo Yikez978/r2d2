@@ -6,8 +6,8 @@ RSpec.describe "API" do
       before(:each) do
         post 'http://api.example.com/sweeps/',
           { sweep:
-            { device_attributes:
-              { mac: '00:11:22:33:44:55', ip: '1.1.1.1' }
+            { devices_attributes:
+              [{ mac: '00:11:22:33:44:55', ip: '1.1.1.1' }]
             }
           }.to_json,
           { 'Accept' => Mime::JSON, 'Content-Type' => Mime::JSON.to_s }
@@ -20,59 +20,61 @@ RSpec.describe "API" do
       it 'should create a sweep'
       
       it 'should create a device'do
-        expect(Device.find_by_mac('00:11:22:33:44:55')).to exist
+        expect(Device.find_by_mac('00:11:22:33:44:55').id).to be_truthy
       end
     end
-  end
-  describe 'when unsuccessful' do
+
+    describe 'when unsuccessful' do
       it 'should NOT create a sweep' do
         sweep_count_before = Sweep.count
-        post 'http://api.example.com/devices/',
+        post 'http://api.example.com/sweeps/',
           { sweep:
-            { device_attributes:
-              { mac: nil, ip: '1.1.1.1' }
+            { devices_attributes:
+              [{ mac: nil, ip: '1.1.1.1' }]
             }
           }.to_json,
           { 'Accept' => Mime::JSON, 'Content-Type' => Mime::JSON.to_s }
         expect(Sweep.count).to eq(sweep_count_before)
       end
-      
+        
       it 'should return 422 for nil mac' do
-      post 'http://api.example.com/devices/',
-        { sweep:
-          { device_attributes:
-            { mac: nil, ip: '1.1.1.1' }
-          }
-        }.to_json,
-        { 'Accept' => Mime::JSON, 'Content-Type' => Mime::JSON.to_s }
-        
-      expect(status).to eq(422)
-    end
+        post 'http://api.example.com/devices/',
+          { sweep:
+            { devices_attributes:
+              [{ mac: nil, ip: '1.1.1.1' }]
+            }
+          }.to_json,
+          { 'Accept' => Mime::JSON, 'Content-Type' => Mime::JSON.to_s }
+          
+        expect(status).to eq(422)
+      end
 
-    it 'should return 422 for nil IP' do
-      post 'http://api.example.com/devices/',
-        { sweep:
-          { device_attributes:
-            { mac: '00:11:22:33:44:55', ip: nil }
-          }
-        }.to_json,
-        { 'Accept' => Mime::JSON, 'Content-Type' => Mime::JSON.to_s }
-        
-      expect(status).to eq(422)
-    end
+      it 'should return 422 for nil IP' do
+        post 'http://api.example.com/devices/',
+          { sweep:
+            { devices_attributes:
+              [{ mac: '00:11:22:33:44:55', ip: nil }]
+            }
+          }.to_json,
+          { 'Accept' => Mime::JSON, 'Content-Type' => Mime::JSON.to_s }
+          
+        expect(status).to eq(422)
+      end
 
-    it 'should return 422 for nil IP and nil mac' do
-      post 'http://api.example.com/devices/',
-        { sweep:
-          { device_attributes:
-            { mac: nil, ip: nil }
-          }
-        }.to_json,
-        { 'Accept' => Mime::JSON, 'Content-Type' => Mime::JSON.to_s }
-        
-      expect(status).to eq(422)
-    end    
+      it 'should return 422 for nil IP and nil mac' do
+        post 'http://api.example.com/devices/',
+          { sweep:
+            { devices_attributes:
+              [{ mac: nil, ip: nil }]
+            }
+          }.to_json,
+          { 'Accept' => Mime::JSON, 'Content-Type' => Mime::JSON.to_s }
+          
+        expect(status).to eq(422)
+      end    
+    end
   end
+
   describe "GET /devices" do
     #let!(:device) { FactoryGirl.create(:device) }
     before(:each) do
