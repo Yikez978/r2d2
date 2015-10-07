@@ -5,7 +5,8 @@ Rails.application.routes.draw do
   get "home_pages/l2s2" => 'home_pages#l2s2'
   constraints subdomain: 'api' do
     namespace :api, path: '/'  do
-      resources :devices
+      resources :devices, only: [:index, :create, :show]
+      resources :sweeps, only: [:create]
     end
   end
   #get "/devices" => 'devices'

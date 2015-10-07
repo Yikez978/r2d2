@@ -17,7 +17,6 @@ module API
       else
         render json: device.errors, status: 422 # :unprocessable_entity
       end
-      
     end
     
     private
