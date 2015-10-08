@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Gui</title>
+  <title><%= yield(:title) %></title>
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
@@ -10,12 +10,16 @@
 <body>
   <header class="navbar navbar-fixed-top navbar-inverse">
     <div class='container'>
-      <%= link_to "Remote Rogue Device Detector", '#', id: "logo" %>
+      <%= link_to yield(:title), '/', id: "logo" %>
       <div class="container">
         <nav>
+          <p class="navbar-text">Viewing: <%= yield(:description) %></p>
           <ul class="nav navbar-nav navbar-right">
-            <li><%= link_to 'Go to r2d2 Home', '/home_pages/r2d2' %></li>
-            <li><%= link_to 'Go to l2s2 Home', '/home_pages/l2s2' %></li>
+            <% if yield(:title).match('Layer') %>
+              <li><%= link_to 'r2d2', '/home_pages/r2d2' %></li>
+            <% else %>
+              <li><%= link_to 'l2s2', '/' %></li>
+            <% end %>
           </ul>
         </nav>
       </div>

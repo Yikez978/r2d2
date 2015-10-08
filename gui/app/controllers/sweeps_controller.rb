@@ -3,7 +3,8 @@ class SweepsController < ApplicationController
     @sweeps = Sweep.paginate(page: params[:page])
   end
   def show
-    device_list = Sweep.find(params[:id]).devices
+    @sweep = Sweep.find(params[:id])
+    device_list = @sweep.devices
     @devices = device_list.paginate(page: params[:page])
   end
 end
