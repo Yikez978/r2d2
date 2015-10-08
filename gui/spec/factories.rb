@@ -4,6 +4,7 @@ FactoryGirl.define do
     ip   Faker::Internet.ip_v4_address
   end
   factory :sweep do
+    description Faker::Lorem.word
     transient do
       device_count 1
     end

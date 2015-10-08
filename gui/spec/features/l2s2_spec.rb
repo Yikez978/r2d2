@@ -37,22 +37,29 @@ RSpec.describe "l2s2", type: :feature do
           expect(page).to have_selector('thead')
         end
         describe 'header' do
-          it 'should have a header for Date' do
-            expect(page).to have_content('Date')
+          it 'should have Description' do
+            expect(page.all('th')[1]).to have_content('Description')
           end
-          it 'should have a header for Device Count' do
-            expect(page).to have_content('Device Count')
+          
+          it 'should have Date' do
+            expect(page.all('th')[2]).to have_content('Date')
+          end
+          it 'should have Device Count' do
+            expect(page.all('th')[3]).to have_content('Device Count')
           end
         end
         describe 'data line' do
           it 'should have a link to display the details' do
             expect(page.find_link('Show',"/sweeps/#{sweep.id}"))
           end
+          it 'should display the description' do
+            expect(page.all('td')[1]).to have_content(sweep.description)
+          end
           it 'should display the date' do
-            expect(page.all('td')[1]).to have_content(sweep.created_at)
+            expect(page.all('td')[2]).to have_content(sweep.created_at)
           end
           it 'should display the number of devices' do
-            expect(page.all('td')[2]).to have_content(sweep.devices.count)
+            expect(page.all('td')[3]).to have_content(sweep.devices.count)
           end
         end
       end

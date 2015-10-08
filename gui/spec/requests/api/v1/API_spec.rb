@@ -6,19 +6,19 @@ RSpec.describe "API" do
       before(:each) do
         post 'http://api.example.com/sweeps/',
           { sweep:
-            { devices_attributes:
+            { description: '1.1.1.0/24', devices_attributes:
               [{ mac: '00:11:22:33:44:55', ip: '1.1.1.1' }]
             }
           }.to_json,
           { 'Accept' => Mime::JSON, 'Content-Type' => Mime::JSON.to_s }
       end
-  
+
       it 'should return status 201' do
         expect(response).to be_created
       end
-  
+
       it 'should create a sweep'
-      
+
       it 'should create a device'do
         expect(Device.find_by_mac('00:11:22:33:44:55').id).to be_truthy
       end
@@ -36,7 +36,7 @@ RSpec.describe "API" do
           { 'Accept' => Mime::JSON, 'Content-Type' => Mime::JSON.to_s }
         expect(Sweep.count).to eq(sweep_count_before)
       end
-        
+
       it 'should return 422 for nil mac' do
         post 'http://api.example.com/devices/',
           { sweep:
@@ -45,7 +45,6 @@ RSpec.describe "API" do
             }
           }.to_json,
           { 'Accept' => Mime::JSON, 'Content-Type' => Mime::JSON.to_s }
-          
         expect(status).to eq(422)
       end
 
@@ -57,7 +56,6 @@ RSpec.describe "API" do
             }
           }.to_json,
           { 'Accept' => Mime::JSON, 'Content-Type' => Mime::JSON.to_s }
-          
         expect(status).to eq(422)
       end
 
@@ -69,7 +67,6 @@ RSpec.describe "API" do
             }
           }.to_json,
           { 'Accept' => Mime::JSON, 'Content-Type' => Mime::JSON.to_s }
-          
         expect(status).to eq(422)
       end    
     end
@@ -92,7 +89,7 @@ RSpec.describe "API" do
       expect(devices.length).to eq(10)
     end
   end
-  
+
   describe 'GET /devices/:id' do
     before(:each) do
       2.times { FactoryGirl.create(:device) }

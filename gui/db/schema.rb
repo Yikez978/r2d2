@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151004162003) do
+ActiveRecord::Schema.define(version: 20151007212321) do
 
   create_table "devices", force: :cascade do |t|
     t.string   "mac"
@@ -28,8 +28,9 @@ ActiveRecord::Schema.define(version: 20151004162003) do
   end
 
   create_table "sweeps", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.string   "description"
   end
 
 end

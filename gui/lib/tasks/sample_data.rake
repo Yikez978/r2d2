@@ -1,13 +1,15 @@
 namespace :db do
   desc "Fill database with sample data"
   task populate: :environment do
-    Device.create!(mac: "00:1f:f3:cd:62:d2",
-                 ip: "192.168.1.1")
-    99.times do |n|
-      mac  = Faker::Internet.mac_address
-      ip = Faker::Internet.ip_v4_address
-      Device.create!(mac: mac,
-                   ip: ip)
+    Rake::Task['db:reset'].invoke
+    25.times do
+      description = Faker::Internet.domain_word
+      s = Sweep.create!(description: description)
+      rand(250).times do
+        mac = Faker::Internet.mac_address
+        ip = Faker::Internet.ip_v4_address
+        s.devices.create!(mac: mac, ip: ip)
+      end
     end
   end
 end
