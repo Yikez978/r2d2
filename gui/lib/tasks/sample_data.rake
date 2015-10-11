@@ -1,13 +1,17 @@
+require 'netaddr'
 namespace :db do
   desc "Fill database with sample data"
   task populate: :environment do
-    Rake::Task['db:reset'].invoke
+    #Rake::Task['db:reset'].invoke
     25.times do
-      description = Faker::Internet.domain_word
+      mask_array = (23..29).to_a
+      cidr4 = NetAddr::CIDR.create(Faker::Internet.ip_v4_address+'/'+mask_array.sample.to_s)
+      description = cidr4.to_s
+      ip_array = cidr4.enumerate
       s = Sweep.create!(description: description)
-      rand(250).times do
+      rand(cidr4.size-2).times do
         mac = Faker::Internet.mac_address
-        ip = Faker::Internet.ip_v4_address
+        ip = ip_array.sample
         s.devices.create!(mac: mac, ip: ip)
       end
     end
