@@ -32,27 +32,27 @@ RSpec.describe "l2s2", type: :feature do
         end
         describe 'header' do
           it 'should have Description' do
-            expect(page.all('th')[1]).to have_content('Description')
+            expect(page.all('th')[0]).to have_content('Description')
           end
           it 'should have Date' do
-            expect(page.all('th')[2]).to have_content('Date')
+            expect(page.all('th')[1]).to have_content('Date')
           end
           it 'should have Device Count' do
-            expect(page.all('th')[3]).to have_content('Device Count')
+            expect(page.all('th')[2]).to have_content('Device Count')
           end
         end
         describe 'data row' do
           it 'should have a link to display the details' do
-            expect(page.find_link('Show',"/sweeps/#{sweep.id}"))
+            expect(page.find_link(sweep.description, "/sweeps/#{sweep.id}"))
           end
           it 'should display the description' do
-            expect(page.all('td')[1]).to have_content(sweep.description)
+            expect(page.all('td')[0]).to have_content(sweep.description)
           end
           it 'should display the date' do
-            expect(page.all('td')[2]).to have_content(sweep.created_at)
+            expect(page.all('td')[1]).to have_content(sweep.created_at)
           end
           it 'should display the number of devices' do
-            expect(page.all('td')[3]).to have_content(sweep.devices.count)
+            expect(page.all('td')[2]).to have_content(sweep.devices.count)
           end
         end
         describe 'should be sortable' do
@@ -93,9 +93,6 @@ RSpec.describe "l2s2", type: :feature do
         it 'should have IP' do
           expect(page.all('th')[1]).to have_content('IP')
         end
-        it 'should have First Seen' do
-          expect(page.all('th')[2]).to have_content('First Seen')
-        end
       end
       describe 'data row' do
         it 'should have a link to display the details' do
@@ -106,9 +103,6 @@ RSpec.describe "l2s2", type: :feature do
         end
         it 'should display the IP' do
           expect(page.all('td')[1]).to have_content(sweep.devices[0].ip)
-        end
-        it 'should display the date' do
-          expect(page.all('td')[2]).to have_content(sweep.created_at)
         end
       end
     end
