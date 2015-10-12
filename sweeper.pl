@@ -1,14 +1,13 @@
 #! /usr/bin/perl
 # Written by Eric McCullough
 # TODO:
-#   DB support
 #   use NetPacket::ARP instead of system arp -an
 #   thread support?
 #   MAC OUI lookup
 #   loop every x seconds/minutes/hours
-#   push or pull to r2d2?
 #   ICMP ping option
 #   track ack response?
+#   syslog output
 
 use strict;
 use Net::CIDR::Set;
@@ -71,16 +70,8 @@ print STDERR "Looking for possible rogue hosts at $hour:$min of $mon/$mday/$year
 my $p = Net::Ping->new("syn", 1); # the second parm is timeout in seconds
 $p->{port_number} = 4445; # doesn't matter what port, we just want the ARP response.
 foreach my $ip (@ips) {
-  print STDERR "$ip\n";
+#  print STDERR "$ip\n";
   $p->ping($ip);
-}
-
-open ARP, "arp -an|";
-while (<ARP>) {
-  next if /<incomplete>/;
-  if (/\(([\d\.]+)\) at ([a-f0-9:]+) /) {
-    $arpt{$1} = $2;
-  }
 }
 
 while (my ($host,$rtt,$ip) = $p->ack) {
@@ -94,6 +85,14 @@ while (my ($host,$rtt,$ip) = $p->ack) {
 }
 $p->close();
 
+open ARP, "arp -an|";
+while (<ARP>) {
+  next if /<incomplete>/;
+  if (/\(([\d\.]+)\) at ([a-f0-9:]+) /) {
+    $arpt{$1} = $2;
+  }
+}
+
 my $json = '{"sweep":{"description":"' . "$network_ip/$cidr" . '","devices_attributes":[';
 foreach my $ip (keys(%arpt)) {
 #  print STDOUT "{ ip: '$ip', mac: '$arpt{$ip}'}\n";
@@ -102,14 +101,6 @@ foreach my $ip (keys(%arpt)) {
 chop $json; # remove trailing comma
 $json .= "]}}";
 update_db($json);
-
-#
-#my $icmp_ping = Net::Ping->new("icmp");
-#$icmp_ping->bind($my_ip);
-#my $pingable = 'N';
-#if ($icmp_ping->ping($ip, 1)) {
-#  $pingable = 'Y';
-#}
 
 gettime();
 print STDERR "Completed scan at $hour:$min of $mon/$mday/$year\n\n";
@@ -128,7 +119,7 @@ sub update_db {
   use LWP::UserAgent;
   my $json = shift;
   my $ua = LWP::UserAgent->new;
-  my $server_endpoint = "http://api.r2d2.com:3000/sweeps";
+  my $server_endpoint = "http://api.r2d2.com:3000/api/sweeps";
 
   # set custom HTTP request header fields
   my $req = HTTP::Request->new(POST => $server_endpoint);
