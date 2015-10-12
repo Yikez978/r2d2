@@ -96,7 +96,7 @@ RSpec.describe "l2s2", type: :feature do
       end
       describe 'data row' do
         it 'should have a link to display the details' do
-          #expect(page.find_link('Show',"/sweeps/#{sweep.id}"))
+          expect(page.find_link(sweep.devices[0].mac,"/devices/#{sweep.devices[0].id}"))
         end
         it 'should display the MAC' do
           expect(page.all('td')[0]).to have_content(sweep.devices[0].mac)

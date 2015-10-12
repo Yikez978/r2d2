@@ -6,5 +6,6 @@ class SweepsController < ApplicationController
     @sweep = Sweep.find(params[:id])
     device_list = @sweep.devices
     @devices = device_list.paginate(page: params[:page])
+    render 'devices/index'
   end
 end

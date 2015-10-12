@@ -1,7 +1,0 @@
-<% provide(:title, "Layer 2 Sweeper Service") %>
-<% provide(:description, @sweep.description) %>
-<table class="table table-striped">
-  <thead><tr><th>MAC</th><th>IP</th></tr></thead>
-  <%= render @devices %>
-</table>
-<%= will_paginate @devices %>
