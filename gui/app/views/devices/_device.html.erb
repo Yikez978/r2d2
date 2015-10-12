@@ -1,1 +1,1 @@
-<tr><td><%=device.mac%></td><td><%=device.ip%></td><td><%=device.created_at%></td></tr>
+<tr><td><%=link_to device.mac, "/devices/#{device.id}"%></td><td><%=device.ip%></td></tr>
