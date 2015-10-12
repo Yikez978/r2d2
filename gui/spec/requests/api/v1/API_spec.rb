@@ -4,7 +4,7 @@ RSpec.describe "API" do
   describe 'POST /sweeps' do
     describe 'when successful' do
       before(:each) do
-        post 'http://api.example.com/sweeps/',
+        post 'http://api.example.com/api/sweeps/',
           { sweep:
             { description: '1.1.1.0/24', devices_attributes:
               [{ mac: '00:11:22:33:44:55', ip: '1.1.1.1' }]
@@ -27,7 +27,7 @@ RSpec.describe "API" do
     describe 'when unsuccessful' do
       it 'should NOT create a sweep' do
         sweep_count_before = Sweep.count
-        post 'http://api.example.com/sweeps/',
+        post 'http://api.example.com/api/sweeps/',
           { sweep:
             { devices_attributes:
               [{ mac: nil, ip: '1.1.1.1' }]
@@ -38,7 +38,7 @@ RSpec.describe "API" do
       end
 
       it 'should return 422 for nil mac' do
-        post 'http://api.example.com/devices/',
+        post 'http://api.example.com/api/devices/',
           { sweep:
             { devices_attributes:
               [{ mac: nil, ip: '1.1.1.1' }]
@@ -49,7 +49,7 @@ RSpec.describe "API" do
       end
 
       it 'should return 422 for nil IP' do
-        post 'http://api.example.com/devices/',
+        post 'http://api.example.com/api/devices/',
           { sweep:
             { devices_attributes:
               [{ mac: '00:11:22:33:44:55', ip: nil }]
@@ -60,7 +60,7 @@ RSpec.describe "API" do
       end
 
       it 'should return 422 for nil IP and nil mac' do
-        post 'http://api.example.com/devices/',
+        post 'http://api.example.com/api/devices/',
           { sweep:
             { devices_attributes:
               [{ mac: nil, ip: nil }]
@@ -76,7 +76,7 @@ RSpec.describe "API" do
     #let!(:device) { FactoryGirl.create(:device) }
     before(:each) do
       10.times { FactoryGirl.create(:device) }
-      get 'http://api.example.com/devices'
+      get 'http://api.example.com/api/devices'
     end
 
     it 'should return status 200' do
@@ -93,7 +93,7 @@ RSpec.describe "API" do
   describe 'GET /devices/:id' do
     before(:each) do
       2.times { FactoryGirl.create(:device) }
-      get "http://api.example.com/devices/#{Device.first.id}"
+      get "http://api.example.com/api/devices/#{Device.first.id}"
     end
     
     it 'should return the requested device' do
@@ -110,7 +110,7 @@ RSpec.describe "API" do
   describe 'POST /devices' do
     describe 'when successful' do
       before(:each) do
-        post 'http://api.example.com/devices/',
+        post 'http://api.example.com/api/devices/',
           { device:
             { mac: '00:11:22:33:44:55', ip: '1.1.1.1' }
           }.to_json,
@@ -128,7 +128,7 @@ RSpec.describe "API" do
   end
   describe 'when unsuccessful' do
     it 'should return 422 for nil mac' do
-      post 'http://api.example.com/devices/',
+      post 'http://api.example.com/api/devices/',
         { device:
           { mac: nil, ip: '1.1.1.1' }
         }.to_json,
@@ -138,7 +138,7 @@ RSpec.describe "API" do
     end
 
     it 'should return 422 for nil IP' do
-      post 'http://api.example.com/devices/',
+      post 'http://api.example.com/api/devices/',
         { device:
           { mac: '00:11:22:33:44:55', ip: nil }
         }.to_json,
@@ -148,7 +148,7 @@ RSpec.describe "API" do
     end
 
     it 'should return 422 for nil IP and nil mac' do
-      post 'http://api.example.com/devices/',
+      post 'http://api.example.com/api/devices/',
         { device:
           { mac: nil, ip: nil }
         }.to_json,
