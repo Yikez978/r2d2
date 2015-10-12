@@ -107,4 +107,40 @@ RSpec.describe "l2s2", type: :feature do
       end
     end
   end
+  describe 'Clicking MAC of a /sweeps/:id item' do
+    let!(:sweep) { FactoryGirl.create(:sweep) }
+    before(:each) do
+      visit "/sweeps/#{sweep.id}"
+      click_link(sweep.devices[0].mac)
+    end
+    it 'should go to /devices/:id' do
+      expect(current_path).to eq("/devices/#{sweep.devices[0].id}")
+    end
+    it 'should have the device MAC in the description in the navbar' do
+      expect(page.all('.navbar-text')[0]).to have_content(sweep.devices[0].mac)
+    end
+    describe 'table' do
+      describe 'headings' do
+        it 'should have IP' do
+          expect(page.all('th')[0]).to have_content('IP')
+        end
+        it 'should have Sweep' do
+          expect(page.all('th')[1]).to have_content('Sweep')
+        end
+      end
+      describe 'data row' do
+        it 'should display the IP' do
+          expect(page.all('td')[0]).to have_content(sweep.devices[0].ip)
+        end
+        it 'should display the Sweep timestamp' do
+          expect(page.all('td')[1]).to have_content(sweep.devices[0].created_at)
+        end
+        # the next test is bad - passes when it shouldn't
+        # need to create multiple sweeps and devices?
+        it 'should have a link to the Sweep' do
+          expect(page.find_link(sweep.devices[0].created_at,"/sweeps/#{sweep.id}"))
+        end
+      end
+    end
+  end
 end

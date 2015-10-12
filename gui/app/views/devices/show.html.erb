@@ -1,0 +1,7 @@
+<% provide(:title, "Layer 2 Sweeper Service") %>
+<% provide(:description, @device.mac) %>
+<table class="table table-striped">
+  <thead><tr><th>IP</th><th>Sweep</th></tr></thead>
+  <%= render partial: 'detail', collection: @details %>
+</table>
+<%= will_paginate @details %>
