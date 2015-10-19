@@ -1,27 +1,27 @@
 require 'rails_helper'
 
 RSpec.describe "l2s2", type: :feature do
-  describe "GET /" do
+  describe "GET /l2s2" do
     describe 'home page' do
       let!(:sweep) { FactoryGirl.create(:sweep) }
       before(:each) do
-        visit '/'
+        visit '/l2s2'
       end
       it 'should have the program name' do
         expect(page).to have_title('Layer 2 Sweeper Service')
       end
       it 'should have link l2s2 to root' do
-        expect(page).to have_link('Layer 2 Sweeper Service', :href => '/')
+        expect(page).to have_link('Layer 2 Sweeper Service', :href => '/l2s2')
       end
       it 'should have Home as the page description in the navbar' do
         expect(page.all('.navbar')[0]).to have_content('Home')
       end
       it 'should have link to r2d2' do
-        expect(page).to have_link('r2d2', :href => '/home_pages/r2d2')
+        expect(page).to have_link('r2d2', :href => '/r2d2')
       end
       it 'should take you to the r2d2 home page when clicking the r2d2 link' do
         click_link('r2d2')
-        expect(current_path).to eq('/home_pages/r2d2')
+        expect(current_path).to eq('/r2d2')
       end
       it 'should display a table' do
         expect(page).to have_selector('table tr')

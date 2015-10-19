@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-
+ruby '2.2.3'
 gem 'rails', '4.2.3'
 gem 'bootstrap-sass'
 gem 'faker'
@@ -33,10 +33,7 @@ group :development, :test do
   gem 'spring-commands-rspec'
   gem 'rspec-rails'
   gem 'guard-rspec'
-  gem 'rb-fsevent' if `uname` =~ /Darwin/
-#  gem 'spork-rails', github: 'sporkrb/spork-rails'
-#  gem 'guard-spork'
-#  gem 'childprocess'
+#  gem 'rb-fsevent' if `uname` =~ /Darwin/ # if causes problems for Heroku
 # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
   gem 'netaddr'

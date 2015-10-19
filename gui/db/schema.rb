@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151007212321) do
+ActiveRecord::Schema.define(version: 20151018231441) do
 
   create_table "devices", force: :cascade do |t|
     t.string   "mac"
@@ -20,11 +20,47 @@ ActiveRecord::Schema.define(version: 20151007212321) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "leases", force: :cascade do |t|
+    t.string   "mac"
+    t.string   "ip"
+    t.string   "mask"
+    t.string   "string"
+    t.string   "expration"
+    t.string   "type"
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer  "scope_id"
+  end
+
+  add_index "leases", ["scope_id"], name: "index_leases_on_scope_id"
+
   create_table "results", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer  "device_id"
     t.integer  "sweep_id"
+  end
+
+  create_table "scopes", force: :cascade do |t|
+    t.string   "ip"
+    t.string   "mask"
+    t.string   "leasetime"
+    t.string   "description"
+    t.string   "comment"
+    t.string   "state"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.integer  "server_id"
+  end
+
+  add_index "scopes", ["server_id"], name: "index_scopes_on_server_id"
+
+  create_table "servers", force: :cascade do |t|
+    t.string   "name"
+    t.string   "ip"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "sweeps", force: :cascade do |t|

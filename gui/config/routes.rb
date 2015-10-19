@@ -2,8 +2,8 @@ Rails.application.routes.draw do
   root 'sweeps#index'
   resources :sweeps, only: [:index, :show]
   resources :devices, only: [:index, :show]
-  get "home_pages/r2d2" => 'home_pages#r2d2'
-  get "home_pages/l2s2" => 'home_pages#l2s2'
+  get "r2d2" => 'home_pages#r2d2'
+  get "l2s2" => 'sweeps#index'
   constraints subdomain: 'api' do
     namespace :api do #, path: '/'  do
       resources :devices, only: [:index, :create, :show]

@@ -23,6 +23,7 @@ RSpec.describe Device, type: :model do
     @device = Device.new(mac: '00:1f:f3:cd:62:d2', ip: '192.168.1.1')
     expect(@device).to be_valid
   end
+
   it "is invalid if mac is not long enough" do
     @device = Device.new(mac: '00:1f:f3:cd:62:d', ip: '192.168.1.1')
     expect(@device).to be_invalid
@@ -36,7 +37,7 @@ RSpec.describe Device, type: :model do
   it "is invalid if mac is has invalid characters" do
     @device = Device.new(mac: '00:1f:f3:cd:62:g2', ip: '192.168.1.1')
     expect(@device).to be_invalid
-  end  
+  end 
 
   it "is invalid if the IP in invalid"
   it "do we want th ip to be a string or a number"

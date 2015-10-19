@@ -4,7 +4,7 @@ class HomePagesController < ApplicationController
   end
 
   def r2d2
-    #code
+    @leases = Lease.paginate(page: params[:page])
   end
 
   def l2s2
