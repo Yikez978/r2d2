@@ -87,6 +87,24 @@ RSpec.describe "r2d2", type: :feature do
           it 'should have a link to display the details' do
             expect(page.find_link(server.scopes[0].leases[0].mac, "/leases/#{server.scopes[0].leases[0].id}"))
           end
+          it 'should have DHCP name' do
+            expect(page.all('td')[2]).to have_content(server.scopes[0].leases[0].name)
+          end
+          it 'should have scope description' do
+            expect(page.all('td')[3]).to have_content(server.scopes[0].description)
+          end
+          it 'should have scope comment' do
+            expect(page.all('td')[4]).to have_content(server.scopes[0].comment)
+          end
+          it 'should have IP' do
+            expect(page.all('td')[5]).to have_content(server.scopes[0].leases[0].ip)
+          end
+          it 'should have lease expiration datetime' do
+            expect(page.all('td')[6]).to have_content(server.scopes[0].leases[0].expiration)
+          end
+          it 'should have DHCP-Server IP' do
+            expect(page.all('td')[16]).to have_content(server.ip)
+          end
         end
       end
       it 'should have pagination controls' do

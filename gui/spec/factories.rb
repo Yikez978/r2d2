@@ -20,10 +20,14 @@ FactoryGirl.define do
   factory :lease do
     mac  { 6.times.map{ rand(256) }.map{ |d| '%02x' % d }.join(':').to_s }
     ip   Faker::Internet.ip_v4_address
+    name Faker::Internet.user_name + '.example.com'
+    expiration Faker::Time.between(2.days.ago, Faker::Time.forward(23, :morning))
   end
   factory :scope do
     ip   Faker::Internet.ip_v4_address
     mask '255.255.255.0'
+    description Faker::Address.street_address
+    comment Faker::Lorem.sentence(3)
     cidr4 = NetAddr::CIDR.create(Faker::Internet.ip_v4_address+'/24')
     ip_array = cidr4.enumerate
     transient do

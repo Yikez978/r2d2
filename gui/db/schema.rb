@@ -24,8 +24,7 @@ ActiveRecord::Schema.define(version: 20151018231441) do
     t.string   "mac"
     t.string   "ip"
     t.string   "mask"
-    t.string   "string"
-    t.string   "expration"
+    t.string   "expiration"
     t.string   "type"
     t.string   "name"
     t.datetime "created_at", null: false
