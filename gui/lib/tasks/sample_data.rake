@@ -32,7 +32,9 @@ namespace :db do
           server.scopes.last.leases << Lease.create(ip: ip_array.sample,
                                                     mac: mac,
                                                     name: Faker::Internet.user_name + '.example.com',
-                                                    expiration: Faker::Time.between(2.days.ago, Faker::Time.forward(23, :morning)))
+                                                    expiration: Faker::Time.between(2.days.ago, Faker::Time.forward(23, :morning)),
+                                                    mask: mask,
+                                                    kind: ['D','B','U','R','N'].sample)
         end
       end
     end

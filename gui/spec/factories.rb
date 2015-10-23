@@ -22,6 +22,7 @@ FactoryGirl.define do
     ip   Faker::Internet.ip_v4_address
     name Faker::Internet.user_name + '.example.com'
     expiration Faker::Time.between(2.days.ago, Faker::Time.forward(23, :morning))
+    kind ['D','B','U','R','N'].sample
   end
   factory :scope do
     ip   Faker::Internet.ip_v4_address

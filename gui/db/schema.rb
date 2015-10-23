@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151018231441) do
+ActiveRecord::Schema.define(version: 20151022235125) do
 
   create_table "devices", force: :cascade do |t|
     t.string   "mac"
@@ -25,7 +25,7 @@ ActiveRecord::Schema.define(version: 20151018231441) do
     t.string   "ip"
     t.string   "mask"
     t.string   "expiration"
-    t.string   "type"
+    t.string   "kind"
     t.string   "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
