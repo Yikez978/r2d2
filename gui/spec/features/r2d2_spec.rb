@@ -33,76 +33,32 @@ RSpec.describe 'r2d2', type: :feature do
         it 'should have DHCP-MAC' do
           expect(page.all('th')[0]).to have_content('DHCP-MAC')
         end
-        it 'should have Note' do
-          expect(page.all('th')[1]).to have_content('Note')
-        end
         it 'should have DHCP-HOST' do
-          expect(page.all('th')[2]).to have_content('DHCP-HOST')
-        end
-        it 'should have ScopeDesc' do
-          #expect(page.all('th')[3]).to have_content('ScopeDesc')
-        end
-        it 'should have ScopeComment' do
-          #expect(page.all('th')[4]).to have_content('ScopeComment')
+          expect(page.all('th')[1]).to have_content('DHCP-HOST')
         end
         it 'should have IP' do
-          expect(page.all('th')[3]).to have_content('IP')
+          expect(page.all('th')[2]).to have_content('IP')
         end
         it 'should have Lease' do
-          expect(page.all('th')[4]).to have_content('Lease')
+          expect(page.all('th')[3]).to have_content('Lease')
         end
         it 'should have Vendor' do
-          expect(page.all('th')[5]).to have_content('Vendor')
+          expect(page.all('th')[4]).to have_content('Vendor')
         end
-        it 'should have NetBIOS-MAC' do
-          expect(page.all('th')[6]).to have_content('NetBIOS-MAC')
-        end
-        it 'should have NetBIOS-Host' do
-          expect(page.all('th')[7]).to have_content('NetBIOS-Host')
-        end
-        it 'should have Ping' do
-          expect(page.all('th')[8]).to have_content('Ping')
-        end
-        it 'should have P4445' do
-          expect(page.all('th')[9]).to have_content('P4445')
-        end
-        it 'should have C$' do
-          expect(page.all('th')[10]).to have_content('C$')
-        end
-        it 'should have AV' do
-          expect(page.all('th')[11]).to have_content('AV')
-        end
-        it 'should have EPO' do
-          expect(page.all('th')[12]).to have_content('EPO')
-        end
-        it 'should have P80' do
-          expect(page.all('th')[13]).to have_content('P80')
-        end
-        it 'should have DHCP-Server' do
-          expect(page.all('th')[14]).to have_content('DHCP-Server')
-        end
+
       end
       describe 'data row' do
         it 'should have a link to display the details' do
           expect(page.find_link(server.scopes[0].leases[0].mac, "/leases/#{server.scopes[0].leases[0].id}"))
         end
         it 'should have DHCP name' do
-          expect(page.all('td')[2]).to have_content(server.scopes[0].leases[0].name)
-        end
-        it 'should have scope description' do
-          #expect(page.all('td')[3]).to have_content(server.scopes[0].description)
-        end
-        it 'should have scope comment' do
-          #expect(page.all('td')[4]).to have_content(server.scopes[0].comment)
+          expect(page.all('td')[1]).to have_content(server.scopes[0].leases[0].name)
         end
         it 'should have IP' do
-          expect(page.all('td')[3]).to have_content(server.scopes[0].leases[0].ip)
+          expect(page.all('td')[2]).to have_content(server.scopes[0].leases[0].ip)
         end
         it 'should have lease expiration datetime' do
-          expect(page.all('td')[4]).to have_content(server.scopes[0].leases[0].expiration)
-        end
-        it 'should have DHCP-Server IP' do
-          expect(page.all('td')[14]).to have_content(server.ip)
+          expect(page.all('td')[3]).to have_content(server.scopes[0].leases[0].expiration)
         end
       end
     end

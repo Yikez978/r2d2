@@ -1,25 +1,15 @@
 <% provide(:title, "Remote Rogue Device Detector") %>
 <% provide(:description, 'Home') %>
-<table class="table table-striped">
-  <thead><tr>
-    <th>DHCP-MAC</th>
-    <th>Note</th>
-    <th>DHCP-HOST</th>
-<!--    <th>ScopeDesc</th>
-    <th>ScopeComment</th> -->
-    <th>IP</th>
-    <th>Lease</th>
-    <th>Vendor</th>
-    <th>NetBIOS-MAC</th>
-    <th>NetBIOS-Host</th>
-    <th>Ping</th>
-    <th>P4445</th>
-    <th>C$</th>
-    <th>AV</th>
-    <th>EPO</th>
-    <th>P80</th>
-    <th>DHCP-Server</th>
-  </tr></thead>
-  <%= render @leases %>
-</table>
-<%= will_paginate @leases %>
+<div class="col-md-12">
+  <table class="table table-striped">
+    <thead><tr>
+      <th>DHCP-MAC</th>
+      <th>DHCP-HOST</th>
+      <th>IP</th>
+      <th>Lease</th>
+      <th>Vendor</th>
+    </tr></thead>
+    <%= render @leases %>
+  </table>
+  <%= will_paginate @leases %>
+</div>
