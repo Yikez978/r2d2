@@ -1,5 +1,16 @@
 <tr>
   <td><%=link_to lease.mac, "/leases/#{lease.id}"%></td>
+  <td>
+    <div class='dropdown'>
+      <a class="dropdown-toggle" data-toggle="dropdown" data-target="#" role="button" aria-haspopup="true" aria-expanded="false">
+        <span class="glyphicon glyphicon-unchecked" aria-hidden="true"></span>
+      </a>
+      <ul class="dropdown-menu">
+        <li><a href="#"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>  Add to Whitelist</a></li>
+        <li><a href="#"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>  Add to Blacklist</a></li>
+      </ul>
+    </div>
+  </td>
   <td><%=lease.name%></td>
   <td><%=lease.ip%></td>
   <td><%=lease.expiration%></td>

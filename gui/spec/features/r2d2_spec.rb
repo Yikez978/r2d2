@@ -33,17 +33,20 @@ RSpec.describe 'r2d2', type: :feature do
         it 'should have DHCP-MAC' do
           expect(page.all('th')[0]).to have_content('DHCP-MAC')
         end
+        it 'should have Status' do
+          expect(page.all('th')[1]).to have_content('Status')
+        end
         it 'should have DHCP-HOST' do
-          expect(page.all('th')[1]).to have_content('DHCP-HOST')
+          expect(page.all('th')[2]).to have_content('DHCP-HOST')
         end
         it 'should have IP' do
-          expect(page.all('th')[2]).to have_content('IP')
+          expect(page.all('th')[3]).to have_content('IP')
         end
         it 'should have Lease' do
-          expect(page.all('th')[3]).to have_content('Lease')
+          expect(page.all('th')[4]).to have_content('Lease')
         end
         it 'should have Vendor' do
-          expect(page.all('th')[4]).to have_content('Vendor')
+          expect(page.all('th')[5]).to have_content('Vendor')
         end
 
       end
@@ -51,14 +54,27 @@ RSpec.describe 'r2d2', type: :feature do
         it 'should have a link to display the details' do
           expect(page.find_link(server.scopes[0].leases[0].mac, "/leases/#{server.scopes[0].leases[0].id}"))
         end
+        describe 'status column' do
+          describe 'should display' do
+            it 'a thumbs up icon if on the whitelist'
+            it 'a thumbs down icon if on the blacklist'
+            it 'an unchecked square if not on either list'
+            it 'a dropdown to select value if hovered over'
+          end
+          describe 'should display a fingerprint icon' do
+            it 'with a checkmark if all fingerprint fields are set'
+            it 'with an x if not all the fingerprint fields are set'
+            it 'with an i if hovered over'
+          end
+        end
         it 'should have DHCP name' do
-          expect(page.all('td')[1]).to have_content(server.scopes[0].leases[0].name)
+          expect(page.all('td')[2]).to have_content(server.scopes[0].leases[0].name)
         end
         it 'should have IP' do
-          expect(page.all('td')[2]).to have_content(server.scopes[0].leases[0].ip)
+          expect(page.all('td')[3]).to have_content(server.scopes[0].leases[0].ip)
         end
         it 'should have lease expiration datetime' do
-          expect(page.all('td')[3]).to have_content(server.scopes[0].leases[0].expiration)
+          expect(page.all('td')[4]).to have_content(server.scopes[0].leases[0].expiration)
         end
       end
     end
