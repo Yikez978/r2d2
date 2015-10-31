@@ -52,13 +52,33 @@ RSpec.describe 'r2d2', type: :feature do
       end
       describe 'data row' do
         it 'should have a link to display the details' do
-          expect(page.find_link(server.scopes[0].leases[0].mac, "/leases/#{server.scopes[0].leases[0].id}"))
+          expect(page.find_link(server.scopes[0].leases[0].device.mac, "/leases/#{server.scopes[0].leases[0].id}"))
         end
         describe 'status column' do
           describe 'should display' do
-            it 'a thumbs up icon if on the whitelist'
-            it 'a thumbs down icon if on the blacklist'
-            it 'an unchecked square if not on either list'
+            it 'a thumbs up icon if on the whitelist' do
+              server.scopes[0].leases[0].device.status = 'W'
+              server.scopes[0].leases[0].device.save
+              within(page.all('tr')[0]) do
+                puts all('span')[0]
+                expect(all('span')[0]).to have_css('.glyphicon-thumbs-up')
+              end
+              #expect(page.all('tr')[0]).find('a').to have_css('.glyphicon-thumbs-up')
+            end
+            it 'a thumbs down icon if on the blacklist' do
+              server.scopes[0].leases[0].device.status = 'B'
+              server.scopes[0].leases[0].device.save
+              within(page.all('tr')[0]) do
+                expect(all('span')[0]).to have_css('.glyphicon-thumbs-down')
+              end
+            end
+            it 'an unchecked square if not on either list' do
+              server.scopes[0].leases[0].device.status = nil
+              server.scopes[0].leases[0].device.save
+              within(page.all('tr')[0]) do
+                expect(all('span')[0]).to have_css('.glyphicon-unchecked')
+              end
+            end
             it 'a dropdown to select value if hovered over'
           end
           describe 'should display a fingerprint icon' do
@@ -92,7 +112,7 @@ RSpec.describe 'r2d2', type: :feature do
       expect(current_path).to eq("/leases/#{server.scopes[0].leases[0].id}")
     end
     it 'should have the lease MAC in the description in the navbar' do
-      expect(page.all('.navbar-text')[0]).to have_content(server.scopes[0].leases[0].mac)
+      expect(page.all('.navbar-text')[0]).to have_content(server.scopes[0].leases[0].device.mac)
     end
     describe 'should display the lease' do
       it 'IP' do

@@ -11,18 +11,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151022235125) do
+ActiveRecord::Schema.define(version: 20151031124049) do
 
   create_table "devices", force: :cascade do |t|
     t.string   "mac"
-    t.string   "ip"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string   "status"
   end
 
   create_table "leases", force: :cascade do |t|
-    t.string   "mac"
-    t.string   "ip"
     t.string   "mask"
     t.string   "expiration"
     t.string   "kind"
@@ -30,8 +28,11 @@ ActiveRecord::Schema.define(version: 20151022235125) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer  "scope_id"
+    t.integer  "device_id"
+    t.string   "ip"
   end
 
+  add_index "leases", ["device_id"], name: "index_leases_on_device_id"
   add_index "leases", ["scope_id"], name: "index_leases_on_scope_id"
 
   create_table "results", force: :cascade do |t|

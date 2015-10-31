@@ -1,8 +1,6 @@
 class Lease < ActiveRecord::Base
-   VALID_MAC_REGEX = /\A[\da-f]{2}:[\da-f]{2}:[\da-f]{2}:[\da-f]{2}:[\da-f]{2}:[\da-f]{2}\z/i
-   validates :ip, presence: true
-   validates :mac, presence: true,
-                   format: { with: VALID_MAC_REGEX }
+  validates :ip, presence: true
   belongs_to :scope
+  belongs_to :device
   self.per_page = 10
 end

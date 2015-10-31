@@ -6,8 +6,4 @@ class HomePagesController < ApplicationController
   def r2d2
     @leases = Lease.includes(scope:[:server]).paginate(page: params[:page])
   end
-
-  def l2s2
-    #code
-  end
 end
