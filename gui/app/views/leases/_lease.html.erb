@@ -6,9 +6,9 @@
         <% if lease.device.status.nil? %>
           <span class="glyphicon glyphicon-unchecked" aria-hidden="true"></span>
         <% elsif lease.device.status.match('W') %>
-          <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true">
+          <span class="glyphicon glyphicon-thumbs-up text-success" aria-hidden="true">
         <% elsif lease.device.status.match('B') %>
-          <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true">
+          <span class="glyphicon glyphicon-thumbs-down text-danger" aria-hidden="true">
         <% end %>
       </a>
       <ul class="dropdown-menu">
@@ -16,6 +16,7 @@
         <li><a href="#"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>  Add to Whitelist</a></li>
         <li><a href="#"><span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>  Add to Blacklist</a></li>
       </ul>
+      <span class="flaticon-fingerprint21"></span>
     </div>
   </td>
   <td><%=lease.name%></td>
