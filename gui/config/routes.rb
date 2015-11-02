@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   root 'sweeps#index'
   resources :sweeps, only: [:index, :show]
-  resources :devices, only: [:index, :show]
+  resources :devices, only: [:index, :show, :update]
   resources :leases, only: [:show]
   get "r2d2" => 'home_pages#r2d2'
   get "l2s2" => 'sweeps#index'

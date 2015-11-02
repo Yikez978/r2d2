@@ -26,7 +26,7 @@ RSpec.describe 'r2d2', type: :feature do
       expect(page).to have_selector('table')
     end
     describe 'table' do
-      it 'should have a header' do
+      it 'has a header' do
         expect(page).to have_selector('thead')
       end
       describe 'header' do
@@ -50,38 +50,92 @@ RSpec.describe 'r2d2', type: :feature do
         end
 
       end
-      describe 'data row' do
+      describe 'has a data row' do
         it 'should have a link to display the details' do
           expect(page.find_link(server.scopes[0].leases[0].device.mac, "/leases/#{server.scopes[0].leases[0].id}"))
         end
-        describe 'status column' do
-          describe 'should display' do
-            it 'a thumbs up icon if on the whitelist' do
-              server.scopes[0].leases[0].device.status = 'W'
-              server.scopes[0].leases[0].device.save
-              within(page.all('tr')[0]) do
-                puts all('span')[0]
-                expect(all('span')[0]).to have_css('.glyphicon-thumbs-up')
-              end
-              #expect(page.all('tr')[0]).find('a').to have_css('.glyphicon-thumbs-up')
+        describe 'status column displays' do
+          it 'a thumbs up icon if on the whitelist' do
+            server.scopes[0].leases[0].device.status = 'W'
+            server.scopes[0].leases[0].device.save
+            visit '/r2d2'
+            within(page.all('a.dropdown-toggle')[0]) do
+              element = all('span')[0]
+              expect(element['class']).to match(/glyphicon-thumbs-up/)
+              expect(element['class']).to match(/text-success/)
             end
-            it 'a thumbs down icon if on the blacklist' do
-              server.scopes[0].leases[0].device.status = 'B'
-              server.scopes[0].leases[0].device.save
-              within(page.all('tr')[0]) do
-                expect(all('span')[0]).to have_css('.glyphicon-thumbs-down')
-              end
+            #expect(page.all('tr')[0]).find('a').to have_css('.glyphicon-thumbs-up')
+          end
+          it 'a thumbs down icon if on the blacklist' do
+            server.scopes[0].leases[0].device.status = 'B'
+            server.scopes[0].leases[0].device.save
+            visit '/r2d2'
+            within(page.all('a.dropdown-toggle')[0]) do
+              element = all('span')[0]
+              expect(element['class']).to match(/glyphicon-thumbs-down/)
+              expect(element['class']).to match(/text-danger/)
             end
-            it 'an unchecked square if not on either list' do
+          end
+          it 'an unchecked square if not on either list' do
+            server.scopes[0].leases[0].device.status = nil
+            server.scopes[0].leases[0].device.save
+            visit '/r2d2'
+            within(page.all('a.dropdown-toggle')[0]) do
+              element = all('span')[0]
+              expect(element['class']).to match(/glyphicon-unchecked/)
+            end
+          end
+          describe 'clicking the glyphicon to display the dropdown' do
+            it 'displays the selections' do
               server.scopes[0].leases[0].device.status = nil
               server.scopes[0].leases[0].device.save
-              within(page.all('tr')[0]) do
-                expect(all('span')[0]).to have_css('.glyphicon-unchecked')
+              visit '/r2d2'
+              link_id = server.scopes[0].leases[0].id.to_s
+              click_link(link_id)
+              within(page.all('ul.dropdown-menu')[0]) do
+                expect(all('li')[0]).to have_content('Remove From List')
+                expect(all('li')[1]).to have_content('Add to Whitelist')
+                expect(all('li')[2]).to have_content('Add to Blacklist')
               end
             end
-            it 'a dropdown to select value if hovered over'
+            it 'selecting a "Add to Blacklist"' do
+              server.scopes[0].leases[0].device.status = nil
+              server.scopes[0].leases[0].device.save
+              visit '/r2d2'
+              link_id = server.scopes[0].leases[0].id.to_s
+              click_link(link_id)
+              within(page.all('ul.dropdown-menu')[0]) do
+                click_button('Add to Blacklist')
+              end
+              server.reload
+              expect(server.scopes[0].leases[0].device.status).to eq('B')
+            end
+            it 'selecting a "Add to Whitelist"' do
+              server.scopes[0].leases[0].device.status = nil
+              server.scopes[0].leases[0].device.save
+              visit '/r2d2'
+              link_id = server.scopes[0].leases[0].id.to_s
+              click_link(link_id)
+              within(page.all('ul.dropdown-menu')[0]) do
+                click_button('Add to Whitelist')
+              end
+              server.reload
+              expect(server.scopes[0].leases[0].device.status).to eq('W')
+            end
+            it 'selecting the "Remove From Any List"' do
+              server.scopes[0].leases[0].device.status = 'W'
+              server.scopes[0].leases[0].device.save
+              visit '/r2d2'
+              link_id = server.scopes[0].leases[0].id.to_s
+              click_link(link_id)
+              within(page.all('ul.dropdown-menu')[0]) do
+                click_button('Remove From List')
+              end
+              server.reload
+              expect(server.scopes[0].leases[0].device.status).to eq(nil)
+            end
           end
-          describe 'should display a fingerprint icon' do
+          describe 'a fingerprint icon' do
             it 'with a checkmark if all fingerprint fields are set'
             it 'with an x if not all the fingerprint fields are set'
             it 'with an i if hovered over'
@@ -106,7 +160,8 @@ RSpec.describe 'r2d2', type: :feature do
     #let!(:scope) { FactoryGirl.create(:scope, lease_count: 1) }
     let!(:server) { FactoryGirl.create(:server, scope_count:1) }
     before(:each) do
-      visit "/leases/#{server.scopes[0].leases[0].id}"
+      visit '/r2d2'
+      click_link "#{server.scopes[0].leases[0].device.mac}"
     end
     it 'should take you to /leases/:id' do
       expect(current_path).to eq("/leases/#{server.scopes[0].leases[0].id}")
