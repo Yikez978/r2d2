@@ -11,16 +11,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151031124049) do
+ActiveRecord::Schema.define(version: 20151115195155) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
 
   create_table "devices", force: :cascade do |t|
     t.string   "mac"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string   "status"
+    t.integer  "list_id"
   end
 
+  add_index "devices", ["list_id"], name: "index_devices_on_list_id", using: :btree
+
   create_table "leases", force: :cascade do |t|
+    t.string   "ip"
     t.string   "mask"
     t.string   "expiration"
     t.string   "kind"
@@ -29,11 +35,16 @@ ActiveRecord::Schema.define(version: 20151031124049) do
     t.datetime "updated_at", null: false
     t.integer  "scope_id"
     t.integer  "device_id"
-    t.string   "ip"
   end
 
-  add_index "leases", ["device_id"], name: "index_leases_on_device_id"
-  add_index "leases", ["scope_id"], name: "index_leases_on_scope_id"
+  add_index "leases", ["device_id"], name: "index_leases_on_device_id", using: :btree
+  add_index "leases", ["scope_id"], name: "index_leases_on_scope_id", using: :btree
+
+  create_table "lists", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "results", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -54,7 +65,7 @@ ActiveRecord::Schema.define(version: 20151031124049) do
     t.integer  "server_id"
   end
 
-  add_index "scopes", ["server_id"], name: "index_scopes_on_server_id"
+  add_index "scopes", ["server_id"], name: "index_scopes_on_server_id", using: :btree
 
   create_table "servers", force: :cascade do |t|
     t.string   "name"
@@ -69,4 +80,8 @@ ActiveRecord::Schema.define(version: 20151031124049) do
     t.string   "description"
   end
 
+  add_foreign_key "devices", "lists"
+  add_foreign_key "leases", "devices"
+  add_foreign_key "leases", "scopes"
+  add_foreign_key "scopes", "servers"
 end
