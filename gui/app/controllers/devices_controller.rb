@@ -14,6 +14,6 @@ class DevicesController < ApplicationController
     end
     device.status = params[:status]
     device.save
-    redirect_to '/r2d2'
+    redirect_to :back
   end
 end

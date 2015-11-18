@@ -4,24 +4,24 @@
     <div class='dropdown'>
       <a id='<%=lease.id%>' class="dropdown-toggle" data-toggle="dropdown" data-target="#" role="button" aria-haspopup="true" aria-expanded="false">
         <% if lease.device.status.nil? %>
-          <span class="glyphicon glyphicon-unchecked" aria-hidden="true"></span>
+          <span class="glyphicon glyphicon-unchecked text-primary" aria-hidden="true"></span>
         <% elsif lease.device.status.match('W') %>
-          <span class="glyphicon glyphicon-thumbs-up text-success" aria-hidden="true">
+          <span class="glyphicon glyphicon-thumbs-up text-success" aria-hidden="true"></span>
         <% elsif lease.device.status.match('B') %>
-          <span class="glyphicon glyphicon-thumbs-down text-danger" aria-hidden="true">
+          <span class="glyphicon glyphicon-thumbs-down text-danger" aria-hidden="true"></span>
         <% end %>
       </a>
       <ul class="dropdown-menu">
-        <li><%= button_to(device_path(lease.device), method: :put, params: { status: ''}) do %>
-              <span class="glyphicon glyphicon-unchecked" aria-hidden="true"></span>  Remove From List
+        <li><%= link_to(device_path(lease.device, params: { status: ''}), method: :put) do %>
+              <span class="glyphicon glyphicon-unchecked text-primary" aria-hidden="true"></span>  Remove From List
             <% end %>
         </li>
-        <li><%= button_to(device_path(lease.device), method: :put, params: { status: 'W'}) do %>
-              <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>  Add to Whitelist
+        <li><%= link_to(device_path(lease.device, params: { status: 'W'}), method: :put) do %>
+              <span class="glyphicon glyphicon-thumbs-up text-success" aria-hidden="true"></span>  Add to Whitelist
             <% end %>
         </li>
-        <li><%= button_to(device_path(lease.device), method: :put, params: { status: 'B'}) do %>
-              <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>  Add to Blacklist
+        <li><%= link_to(device_path(lease.device, params: { status: 'B'}), method: :put) do %>
+              <span class="glyphicon glyphicon-thumbs-down text-danger" aria-hidden="true"></span>  Add to Blacklist
             <% end %>
         </li>
       </ul>
