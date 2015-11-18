@@ -5,9 +5,9 @@
     <thead><tr>
       <th>DHCP-MAC</th>
       <th>Status</th>
-      <th>DHCP-HOST</th>
+      <th><%= sort_link(@search, :name, "DHCP-HOST") %></th>
       <th>IP</th>
-      <th>Lease</th>
+      <th><%= sort_link(@search, :expiration, "Lease") %></th>
       <th>Vendor</th>
     </tr></thead>
     <%= render @leases %>
