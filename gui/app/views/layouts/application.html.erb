@@ -18,6 +18,13 @@
       <div class="container">
         <nav>
           <p class="navbar-text">Viewing: <%= yield(:description) %></p>
+          <% if yield(:description).match('Home') %>
+            <div class='navbar-form navbar-left'>
+              <button type='button' class="btn btn-default" data-toggle="modal" data-target="#filter">
+                <span class="glyphicon glyphicon-filter"></span>
+              </button>
+            </div>
+          <% end %>
           <ul class="nav navbar-nav navbar-right">
             <% if yield(:title).match('Layer') %>
               <li><%= link_to 'r2d2', '/r2d2' %></li>
@@ -29,6 +36,35 @@
       </div>
     </div>
   </header>
+  <% if yield(:description).match('Home') %>
+    <div class='modal fade' id='filter' role='dialog'>
+      <div class='modal-dialog'>
+        <div class='modal-content'>
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Set Filters</h4>
+          </div>
+          <div class="modal-body">
+            <%= search_form_for @search do |f| %>
+            <div class="field">
+              <%= f.label 'List Status'%>
+              <%= f.collection_check_boxes :device_list_id_in_any, List.all, :id, :name do |b| %>
+              <div class="collection-check-box">
+                <%= b.check_box %>
+                <%= b.label %>
+              </div>
+              <% end %>
+            </div>
+            <button type="submit" class="btn btn-primary">Apply</button>
+            <% end %>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
   <div class='container'>
     <%= yield %>
   </div>

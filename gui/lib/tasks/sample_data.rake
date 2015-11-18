@@ -14,7 +14,10 @@ namespace :db do
 #        s.devices.create!(mac: mac)
 #      end
 #    end
-    5.times do
+    List.create(name: 'Unassigned')
+    List.create(name: 'Whitelist')
+    List.create(name: 'Blacklist')
+    3.times do
       ip = Faker::Internet.ip_v4_address
       name = Faker::Internet.domain_word + ".example.com"
       server = Server.create(ip: ip, name: name)
@@ -29,8 +32,12 @@ namespace :db do
         rand(cidr4.size-2).times do
           server.scopes.last.leases << Lease.create(ip: ip_array.sample,
                                                     device: Device.create(mac: 6.times.map{ rand(256) }.map{ |d| '%02x' % d }.join(':').to_s,
-                                                                          status: ['W','W','W','W',nil].sample),
-                                                    name: Faker::Internet.user_name + '.example.com',
+                                                                          list: [List.find_by_name('Whitelist'),
+                                                                                   List.find_by_name('Whitelist'),
+                                                                                   List.find_by_name('Whitelist'),
+                                                                                   List.find_by_name('Whitelist'),
+                                                                                   List.find_by_name('Unassigned')].sample),
+                                                    name: 'com.example.' + Faker::Internet.user_name,
                                                     expiration: Faker::Time.between(2.days.ago, Faker::Time.forward(23, :morning)),
                                                     mask: mask,
                                                     kind: ['D','B','U','R','N'].sample)
@@ -38,8 +45,8 @@ namespace :db do
       end
     end
     5.times do
-      device = Lease.all.sample.device
-      device.status = 'B'
+      device = Device.all.sample
+      device.list = List.find_by_name('Blacklist')
       device.save
     end
   end

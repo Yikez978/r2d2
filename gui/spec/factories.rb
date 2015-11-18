@@ -1,8 +1,14 @@
 require 'netaddr'
 FactoryGirl.define do
+  factory :list do
+    name 'Unassigned'
+  end
+
   factory :device do
     mac  { 6.times.map{ rand(256) }.map{ |d| '%02x' % d }.join(':').to_s }
+    list
   end
+
   factory :sweep do
     cidr = (16..29).to_a
     ip = Faker::Internet.ip_v4_address
@@ -17,13 +23,12 @@ FactoryGirl.define do
   end
 
   factory :lease do
-    name Faker::Internet.user_name + '.example.com'
+    name 'com.example.' + Faker::Internet.user_name
     expiration Faker::Time.between(2.days.ago, Faker::Time.forward(23, :morning))
     kind ['D','B','U','R','N'].sample
-    after(:create) do |lease|
-      lease.device = create(:device)
-    end
+    device
   end
+
   factory :scope do
     ip   Faker::Internet.ip_v4_address
     mask '255.255.255.0'
@@ -38,6 +43,7 @@ FactoryGirl.define do
       evaluator.lease_count.times  { scope.leases << create(:lease, ip: ip_array.sample) }
     end
   end
+
   factory :server do
     ip   Faker::Internet.ip_v4_address
     name Faker::Internet.domain_word + ".example.com"

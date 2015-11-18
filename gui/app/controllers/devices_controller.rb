@@ -9,10 +9,10 @@ class DevicesController < ApplicationController
   end
   def update
     device = Device.find(params[:id])
-    if params[:status].empty?
-      params[:status] = nil
+    if params[:list].empty?
+      params[:list] = List.find_by_name('Unassigned')
     end
-    device.status = params[:status]
+    device.list = List.find(params[:list])
     device.save
     redirect_to :back
   end

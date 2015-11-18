@@ -56,7 +56,7 @@ RSpec.describe 'r2d2', type: :feature do
         end
         describe 'status column displays' do
           it 'a thumbs up icon if on the whitelist' do
-            server.scopes[0].leases[0].device.status = 'W'
+            server.scopes[0].leases[0].device.list = List.find_by_name('Whitelist')
             server.scopes[0].leases[0].device.save
             visit '/r2d2'
             within(page.all('a.dropdown-toggle')[0]) do
@@ -67,7 +67,7 @@ RSpec.describe 'r2d2', type: :feature do
             #expect(page.all('tr')[0]).find('a').to have_css('.glyphicon-thumbs-up')
           end
           it 'a thumbs down icon if on the blacklist' do
-            server.scopes[0].leases[0].device.status = 'B'
+            server.scopes[0].leases[0].device.list = List.find_by_name('Blacklist')
             server.scopes[0].leases[0].device.save
             visit '/r2d2'
             within(page.all('a.dropdown-toggle')[0]) do
@@ -77,7 +77,7 @@ RSpec.describe 'r2d2', type: :feature do
             end
           end
           it 'an unchecked square if not on either list' do
-            server.scopes[0].leases[0].device.status = nil
+            server.scopes[0].leases[0].device.ist = List.find_by_name('Unassigned')
             server.scopes[0].leases[0].device.save
             visit '/r2d2'
             within(page.all('a.dropdown-toggle')[0]) do
@@ -87,7 +87,7 @@ RSpec.describe 'r2d2', type: :feature do
           end
           describe 'clicking the glyphicon to display the dropdown' do
             it 'displays the selections' do
-              server.scopes[0].leases[0].device.status = nil
+              server.scopes[0].leases[0].device.ist = List.find_by_name('Unassigned')
               server.scopes[0].leases[0].device.save
               visit '/r2d2'
               link_id = server.scopes[0].leases[0].id.to_s
@@ -99,40 +99,40 @@ RSpec.describe 'r2d2', type: :feature do
               end
             end
             it 'selecting a "Add to Blacklist"' do
-              server.scopes[0].leases[0].device.status = nil
+              server.scopes[0].leases[0].device.ist = List.find_by_name('Unassigned')
               server.scopes[0].leases[0].device.save
               visit '/r2d2'
               link_id = server.scopes[0].leases[0].id.to_s
               click_link(link_id)
               within(page.all('ul.dropdown-menu')[0]) do
-                click_button('Add to Blacklist')
+                click_link('Add to Blacklist')
               end
               server.reload
-              expect(server.scopes[0].leases[0].device.status).to eq('B')
+              expect(server.scopes[0].leases[0].device.list).to eq(List.find_by_name('Blacklist'))
             end
             it 'selecting a "Add to Whitelist"' do
-              server.scopes[0].leases[0].device.status = nil
+              server.scopes[0].leases[0].device.ist = List.find_by_name('Unassigned')
               server.scopes[0].leases[0].device.save
               visit '/r2d2'
               link_id = server.scopes[0].leases[0].id.to_s
               click_link(link_id)
               within(page.all('ul.dropdown-menu')[0]) do
-                click_button('Add to Whitelist')
+                click_link('Add to Whitelist')
               end
               server.reload
-              expect(server.scopes[0].leases[0].device.status).to eq('W')
+              expect(server.scopes[0].leases[0].device.list).to eq(List.find_by_name('Whitelist'))
             end
             it 'selecting the "Remove From Any List"' do
-              server.scopes[0].leases[0].device.status = 'W'
+              server.scopes[0].leases[0].device.list = List.find_by_name('Whitelist')
               server.scopes[0].leases[0].device.save
               visit '/r2d2'
               link_id = server.scopes[0].leases[0].id.to_s
               click_link(link_id)
               within(page.all('ul.dropdown-menu')[0]) do
-                click_button('Remove From List')
+                click_link('Remove From List')
               end
               server.reload
-              expect(server.scopes[0].leases[0].device.status).to eq(nil)
+              expect(server.scopes[0].leases[0].device.list).to eq(List.find_by_name('Unassigned'))
             end
           end
           describe 'a fingerprint icon' do

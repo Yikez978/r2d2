@@ -1,12 +1,19 @@
 require 'rails_helper'
 
 RSpec.describe Lease, type: :model do
+  before(:each) {
+    FactoryGirl.create(:device)
+  }
   it 'is invalid if IP is empty' do
-    lease = Lease.new()
+    lease = Lease.new(ip: '')
     expect(lease).to be_invalid
   end
-  it 'is valid if IP defined' do
-    lease = Lease.new(ip: '1.1.1.1')
+  it 'is invalid if device is empty' do
+    lease = Lease.new(ip: '1.1.1.1', device: nil)
+    expect(lease).to be_invalid
+  end
+  it 'is valid if IP and device are defined' do
+    lease = Lease.new(ip: '1.1.1.1', device: device)
     expect(lease).to be_valid
   end
   it 'has an expiration'
