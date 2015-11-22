@@ -8,65 +8,13 @@
 </head>
 
 <body>
-  <header class="navbar navbar-fixed-top navbar-inverse">
-    <div class='container'>
-      <% if yield(:title).match('Layer') %>
-        <%= link_to yield(:title), '/l2s2', id: "logo" %></li>
-      <% else %>
-        <%= link_to yield(:title), '/r2d2', id: "logo" %></li>
-      <% end %>
-      <div class="container">
-        <nav>
-          <p class="navbar-text">Viewing: <%= yield(:description) %></p>
-          <% if yield(:description).match('Home') %>
-            <div class='navbar-form navbar-left'>
-              <button type='button' class="btn btn-default" data-toggle="modal" data-target="#filter">
-                <span class="glyphicon glyphicon-filter"></span>
-              </button>
-            </div>
-          <% end %>
-          <ul class="nav navbar-nav navbar-right">
-            <% if yield(:title).match('Layer') %>
-              <li><%= link_to 'r2d2', '/r2d2' %></li>
-            <% else %>
-              <li><%= link_to 'l2s2', '/l2s2' %></li>
-            <% end %>
-          </ul>
-        </nav>
-      </div>
-    </div>
-  </header>
-  <% if yield(:description).match('Home') %>
-    <div class='modal fade' id='filter' role='dialog'>
-      <div class='modal-dialog'>
-        <div class='modal-content'>
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="myModalLabel">Set Filters</h4>
-          </div>
-          <div class="modal-body">
-            <%= search_form_for @search do |f| %>
-            <div class="field">
-              <%= f.label 'List Status'%>
-              <%= f.collection_check_boxes :device_list_id_in_any, List.all, :id, :name do |b| %>
-              <div class="collection-check-box">
-                <%= b.check_box %>
-                <%= b.label %>
-              </div>
-              <% end %>
-            </div>
-            <button type="submit" class="btn btn-primary">Apply</button>
-            <% end %>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  <% end %>
+  <%= render 'layouts/header' %>
+  <%= render 'layouts/home_modal' %>
   <div class='container'>
     <%= yield %>
+  </div>
+  <div class='container'>
+    <%= render 'layouts/footer' %>
   </div>
 </body>
 </html>

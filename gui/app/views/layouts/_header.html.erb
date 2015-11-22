@@ -1,0 +1,28 @@
+  <header class="navbar navbar-fixed-top navbar-inverse">
+    <div class='container'>
+      <% if yield(:title).match('Layer') %>
+        <%= link_to yield(:title), '/l2s2', id: "logo" %></li>
+      <% else %>
+        <%= link_to yield(:title), '/r2d2', id: "logo" %></li>
+      <% end %>
+      <div class="container">
+        <nav>
+          <p class="navbar-text">Viewing: <%= yield(:description) %></p>
+          <% if yield(:description).match('Home') %>
+            <div class='navbar-form navbar-left'>
+              <button type='button' class="btn btn-default" data-toggle="modal" data-target="#filter">
+                <span class="glyphicon glyphicon-filter"></span>
+              </button>
+            </div>
+          <% end %>
+          <ul class="nav navbar-nav navbar-right">
+            <% if yield(:title).match('Layer') %>
+              <li><%= link_to 'r2d2', '/r2d2' %></li>
+            <% else %>
+              <li><%= link_to 'l2s2', '/l2s2' %></li>
+            <% end %>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </header>
