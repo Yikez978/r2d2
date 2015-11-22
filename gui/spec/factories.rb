@@ -1,4 +1,18 @@
 require 'netaddr'
+
+saved_single_instances = {}
+#Find or create the model instance
+single_instances = lambda do |factory_key|
+  begin
+    saved_single_instances[factory_key].reload
+  rescue NoMethodError, ActiveRecord::RecordNotFound  
+    #was never created (is nil) or was cleared from db
+    saved_single_instances[factory_key] = FactoryGirl.create(factory_key)  #recreate
+  end
+
+  return saved_single_instances[factory_key]
+end
+
 FactoryGirl.define do
   factory :list do
     name 'Unassigned'
@@ -6,7 +20,8 @@ FactoryGirl.define do
 
   factory :device do
     mac  { 6.times.map{ rand(256) }.map{ |d| '%02x' % d }.join(':').to_s }
-    list
+    #list { single_instances[:list] }
+    list { List.find_by_name('Unassigned') }
   end
 
   factory :sweep do
@@ -23,6 +38,7 @@ FactoryGirl.define do
   end
 
   factory :lease do
+    ip Faker::Internet.ip_v4_address
     name 'com.example.' + Faker::Internet.user_name
     expiration Faker::Time.between(2.days.ago, Faker::Time.forward(23, :morning))
     kind ['D','B','U','R','N'].sample
