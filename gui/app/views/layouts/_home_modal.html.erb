@@ -17,6 +17,14 @@
               </div>
               <% end %>
             </div>
+            <div class="field">
+              <%= f.label 'Select Server'%>
+              <%= f.collection_select(:scope_server_id_eq, Server.all, :id, :name, include_blank: true) %>
+            </div>
+            <div class="field">
+              <%= f.label 'Select Scope'%>
+              <%= f.collection_select(:scope_id_eq, Scope.all, :id, :ip, include_blank: true) %>
+            </div>
             <button type="submit" class="btn btn-primary">Apply</button>
             <% end %>
           </div>
