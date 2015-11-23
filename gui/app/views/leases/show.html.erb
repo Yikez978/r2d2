@@ -1,6 +1,7 @@
 <% provide(:title, "Remote Rogue Device Detector") %>
 <% provide(:description, @lease.device.mac) %>
-<p>IP/Mask: <%=@lease.ip%>/<%=@lease.mask%></p>
+<p>IP: <%=@lease.ip%></p>
+<p>Mask: </p><%=@lease.mask%></p>
 <p>Expiration: <%=@lease.expiration%></p>
 <p>Kind: <%=@lease.kind%></p>
 <p>Name: <%=@lease.name%></p>

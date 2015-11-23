@@ -189,28 +189,28 @@ RSpec.describe 'r2d2', type: :feature do
         expect(page.all('p')[1]).to have_content(@server.scopes[0].leases[0].ip)
       end
       it 'mask' do
-        expect(page.all('p')[1]).to have_content(@server.scopes[0].leases[0].mask)
+        expect(page.all('p')[2]).to have_content(@server.scopes[0].leases[0].mask)
       end
       it 'expiration' do
-        expect(page.all('p')[2]).to have_content(@server.scopes[0].leases[0].expiration)
+        expect(page.all('p')[3]).to have_content(@server.scopes[0].leases[0].expiration)
       end
       it 'kind' do
-        expect(page.all('p')[3]).to have_content(@server.scopes[0].leases[0].kind)
+        expect(page.all('p')[4]).to have_content(@server.scopes[0].leases[0].kind)
       end
       it 'name' do
-        expect(page.all('p')[4]).to have_content(@server.scopes[0].leases[0].name)
+        expect(page.all('p')[5]).to have_content(@server.scopes[0].leases[0].name)
       end
       it 'created_at' do
-        expect(page.all('p')[5]).to have_content(@server.scopes[0].leases[0].created_at)
+        expect(page.all('p')[6]).to have_content(@server.scopes[0].leases[0].created_at)
       end
       it 'updated_at' do
-        expect(page.all('p')[6]).to have_content(@server.scopes[0].leases[0].updated_at)
+        expect(page.all('p')[7]).to have_content(@server.scopes[0].leases[0].updated_at)
       end
       it 'scope description' do
-        expect(page.all('p')[7]).to have_content(@server.scopes[0].description)
+        expect(page.all('p')[8]).to have_content(@server.scopes[0].description)
       end
       it 'scope server name' do
-        expect(page.all('p')[8]).to have_content(@server.name)
+        expect(page.all('p')[9]).to have_content(@server.name)
       end
     end
   end
