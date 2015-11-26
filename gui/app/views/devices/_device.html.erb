@@ -1,1 +1,20 @@
-<tr><td><%=link_to device.mac, "/devices/#{device.id}"%></td><td><%=device.ip%></td></tr>
+<div class='row'>
+  <h2>Device</h2>
+  <div class='col-md-4'>
+    <% @device = device %>
+    <% if @device.list.name.match('U') %>
+        <span class="glyphicon glyphicon-unchecked text-primary" aria-hidden="true"></span>
+      <% elsif @device.list.name.match('W') %>
+        <span class="glyphicon glyphicon-thumbs-up text-success" aria-hidden="true"></span>
+      <% elsif @device.list.name.match('B') %>
+        <span class="glyphicon glyphicon-thumbs-down text-danger" aria-hidden="true"></span>
+    <% end %>
+    <%= @device.list.name %>
+  </div>
+  <div class='col-md-8'>
+    <%= form_for @device do |f| %>
+      <%= f.text_area(:notes, class: "form-control", placeholder: "Enter Notes Here") %>
+      <%= submit_tag('Update Notes', class: "btn btn-default pull-right") %>
+    <% end %>
+  </div>
+</div>

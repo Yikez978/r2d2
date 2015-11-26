@@ -47,6 +47,7 @@ namespace :db do
     5.times do
       device = Device.all.sample
       device.list = List.find_by_name('Blacklist')
+      device.notes = Faker::Lorem.sentence(3)
       device.save
     end
   end

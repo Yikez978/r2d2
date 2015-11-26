@@ -184,33 +184,57 @@ RSpec.describe 'r2d2', type: :feature do
     it 'should have the lease MAC in the description in the navbar' do
       expect(page.all('.navbar-text')[0]).to have_content(@server.scopes[0].leases[0].device.mac)
     end
-    describe 'should display the lease' do
+    describe 'displays the device' do
+      it 'list' do
+        expect(page.all('.row')[0]).to have_content(@server.scopes[0].leases[0].device.list.name)
+      end
+      it 'notes' do
+        @server.scopes[0].leases[0].device.notes = 'This is a test'
+        @server.scopes[0].leases[0].device.save!
+        visit '/r2d2'
+        click_link "#{@server.scopes[0].leases[0].device.mac}"
+        expect(find_field('device_notes').value).to eq('This is a test')
+      end
+      it 'fingerprint'
+      it 'model'
+      it 'purpose'
+      it 'department'
+      it 'owner'
+    end
+    describe ', filling in the Notes textarea and clicking the Edit button' do
+      it 'displays the new notes' do
+        fill_in('device_notes', :with => 'This is NOT a test')
+        click_button('Update Notes')
+        expect(find_field('device_notes').value).to eq('This is NOT a test')
+      end
+    end
+    describe 'displays the lease' do
+      it 'name' do
+        expect(page.all('p')[1]).to have_content(@server.scopes[0].leases[0].name)
+      end
       it 'IP' do
         expect(page.all('p')[1]).to have_content(@server.scopes[0].leases[0].ip)
       end
       it 'mask' do
-        expect(page.all('p')[2]).to have_content(@server.scopes[0].leases[0].mask)
+        expect(page.all('p')[1]).to have_content(@server.scopes[0].leases[0].mask)
       end
       it 'expiration' do
-        expect(page.all('p')[3]).to have_content(@server.scopes[0].leases[0].expiration)
-      end
-      it 'kind' do
-        expect(page.all('p')[4]).to have_content(@server.scopes[0].leases[0].kind)
-      end
-      it 'name' do
-        expect(page.all('p')[5]).to have_content(@server.scopes[0].leases[0].name)
-      end
-      it 'created_at' do
-        expect(page.all('p')[6]).to have_content(@server.scopes[0].leases[0].created_at)
-      end
-      it 'updated_at' do
-        expect(page.all('p')[7]).to have_content(@server.scopes[0].leases[0].updated_at)
+        expect(page.all('p')[2]).to have_content(@server.scopes[0].leases[0].expiration)
       end
       it 'scope description' do
-        expect(page.all('p')[8]).to have_content(@server.scopes[0].description)
+        expect(page.all('p')[2]).to have_content(@server.scopes[0].description)
       end
       it 'scope server name' do
-        expect(page.all('p')[9]).to have_content(@server.name)
+        expect(page.all('p')[2]).to have_content(@server.name)
+      end
+      it 'kind' do
+        expect(page.all('p')[3]).to have_content(@server.scopes[0].leases[0].kind)
+      end
+      it 'created_at' do
+        expect(page.all('p')[3]).to have_content(@server.scopes[0].leases[0].created_at)
+      end
+      it 'updated_at' do
+        expect(page.all('p')[3]).to have_content(@server.scopes[0].leases[0].updated_at)
       end
     end
   end

@@ -1,11 +1,21 @@
 <% provide(:title, "Remote Rogue Device Detector") %>
 <% provide(:description, @lease.device.mac) %>
-<p>IP: <%=@lease.ip%></p>
-<p>Mask: </p><%=@lease.mask%></p>
-<p>Expiration: <%=@lease.expiration%></p>
-<p>Kind: <%=@lease.kind%></p>
-<p>Name: <%=@lease.name%></p>
-<p>Created at: <%=@lease.created_at%></p>
-<p>Last Updated: <%=@lease.updated_at%></p>
-<p>Member of Scope: <%=@lease.scope.description%></p>
-<p>On Server: <%=@lease.scope.server.name%></p>
+<%= render @lease.device %>
+<div class='row'>
+  <h2>Lease</h2>
+  <div class='col-md-4'>
+    <p>Name: <%=@lease.name%><br>
+    IP: <%=@lease.ip%><br>
+     Mask: <%=@lease.mask%></p>
+  </div>
+  <div class='col-md-4'>
+    <p>Expiration: <%=@lease.expiration%><br>
+    Member of Scope: <%=@lease.scope.description%><br>
+    On Server: <%=@lease.scope.server.name%></p>
+  </div>
+  <div class='col-md-4'>
+    <p>Kind: <%=@lease.kind%><br>
+    Created at: <%=@lease.created_at%><br>
+    Last Updated: <%=@lease.updated_at%></p>
+  </div>
+</div>
