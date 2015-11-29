@@ -5,32 +5,42 @@ RSpec.describe Lease, type: :model do
     Lease.destroy_all
     @device = FactoryGirl.create(:device)
   end
+
   after(:all) do
     Device.all.destroy_all
   end
+
   it 'is invalid if IP is empty' do
     lease = Lease.new(ip: '')
     expect(lease).to be_invalid
   end
+
   it 'is invalid if device is empty' do
-    lease = Lease.new(ip: '1.1.1.1', device: nil)
+    lease = Lease.new(ip: '1.1.1.1', device: nil, expiration: Faker::Time)
     expect(lease).to be_invalid
   end
-  it 'is valid if IP and device are defined' do
-    lease = Lease.new(ip: '1.1.1.1', device: @device)
+
+  it 'is invalid if expiration is empty' do
+    lease = Lease.new(ip: '1.1.1.1', device: @device, expiration: nil)
+    expect(lease).to be_invalid
+  end
+
+  it 'is valid if IP, device, expiration are defined' do
+    lease = Lease.new(ip: '1.1.1.1', device: @device, expiration: Faker::Time)
     expect(lease).to be_valid
   end
-  it 'has an expiration'
+
   it 'has a mask'
-  describe 'kind' do
-    it 'is valid if D'
-    it 'is valid if B'
-    it 'is valid if U'
-    it 'is valid if R'
-    it 'is valid if N'
+
+  describe 'kind' do # called type by M$
+    it 'is valid if D' # DHCP
+    it 'is valid if B' # BOOTP
+    it 'is valid if U' # UNSPECIFIED
+    it 'is valid if R' # RESERVATION IP
+    it 'is valid if N' # NONE
     it 'is invalid if not DBURN'
   end
+
   it 'belongs to a scope'
-  it 'has a device'
   it 'has a name'
 end
