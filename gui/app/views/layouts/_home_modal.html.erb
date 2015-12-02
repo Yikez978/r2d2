@@ -1,4 +1,4 @@
-  <% if yield(:description).match('Home') %>
+  <% if yield(:description).match(/^Home$/) %>
     <div class='modal fade' id='filter' role='dialog'>
       <div class='modal-dialog'>
         <div class='modal-content'>
@@ -6,30 +6,38 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <h4 class="modal-title" id="myModalLabel">Set Filters</h4>
           </div>
-          <div class="modal-body">
-            <%= search_form_for @search do |f| %>
-            <div class="field">
-              <%= f.label 'List Status'%>
-              <%= f.collection_check_boxes :device_list_id_in_any, List.all, :id, :name do |b| %>
-              <div class="collection-check-box">
-                <%= b.check_box %>
-                <%= b.label %>
+          <div class="container modal-body">
+            <div class="row">
+              <%= search_form_for @search, {class: 'form-inline'} do |f| %>
+              <div class='col-md-2'>
+                <div class="field">
+                  <%= f.label 'List Status' %>
+                  <%= f.collection_check_boxes :device_list_id_in_any, List.all, :id, :name do |b| %>
+                  <div class="collection-check-box">
+                    <%= b.check_box %>
+                    <%= b.label %>
+                  </div>
+                  <% end %>
+                </div>
+              </div>
+              <div class='col-md-4'>
+                <div class="field">
+                  <%= f.label 'Server' %>
+                  <%= f.collection_select(:scope_server_id_eq, Server.all, :id, :name, include_blank: true) %>
+                </div>
+                <div class="field">
+                  <%= f.label 'Scope' %>
+                  <%= f.collection_select(:scope_id_eq, Scope.all, :id, :ip, include_blank: true) %>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class='col-md-6'>
+                <button type="submit" class="btn btn-primary pull-right">Apply</button>
+                <button type="button" class="btn btn-default pull-right" data-dismiss="modal">Cancel</button>
               </div>
               <% end %>
             </div>
-            <div class="field">
-              <%= f.label 'Select Server'%>
-              <%= f.collection_select(:scope_server_id_eq, Server.all, :id, :name, include_blank: true) %>
-            </div>
-            <div class="field">
-              <%= f.label 'Select Scope'%>
-              <%= f.collection_select(:scope_id_eq, Scope.all, :id, :ip, include_blank: true) %>
-            </div>
-            <button type="submit" class="btn btn-primary">Apply</button>
-            <% end %>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
           </div>
         </div>
       </div>
