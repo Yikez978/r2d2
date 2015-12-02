@@ -5,4 +5,8 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
-List.create([{ name: 'Unassigned' }, { name: 'Whitelist' }, { name: 'Blacklist' }])
+List.create([
+               { name: 'Unassigned', glyph: 'glyphicon-unchecked' },
+               { name: 'Whitelist', glyph: 'glyphicon-thumbs-up' },
+               { name: 'Blacklist', glyph: 'glyphicon-thumbs-down' }
+            ])

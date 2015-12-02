@@ -1,0 +1,15 @@
+<% provide(:title, "Remote Rogue Device Detector") %>
+<% provide(:description, 'Lists') %>
+<div class='row'>
+  <div class='col-md-4 col-md-offset-2'>
+    <table class="table table-striped">
+      <thead><tr>
+        <th>Glyph</th>
+        <th>Name</th>
+        <th>Count</th>
+      </tr></thead>
+      <%= render @lists %>
+    </table>
+    <%= will_paginate @lists %>
+  </div>
+</div>

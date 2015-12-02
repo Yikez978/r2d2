@@ -1,8 +1,13 @@
 require 'netaddr'
 
 FactoryGirl.define do
+  
+  sequence :name do |n|
+    "list#{n}"
+  end
+  
   factory :list do
-    name 'Unassigned'
+    name
   end
 
   factory :device do

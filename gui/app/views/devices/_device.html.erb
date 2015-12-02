@@ -2,13 +2,15 @@
   <h2>Device</h2>
   <div class='col-md-4'>
     <% @device = device %>
-    <% if @device.list.name.match('U') %>
-        <span class="glyphicon glyphicon-unchecked text-primary" aria-hidden="true"></span>
-      <% elsif @device.list.name.match('W') %>
-        <span class="glyphicon glyphicon-thumbs-up text-success" aria-hidden="true"></span>
-      <% elsif @device.list.name.match('B') %>
-        <span class="glyphicon glyphicon-thumbs-down text-danger" aria-hidden="true"></span>
+    <% if device.list.name.match('Unassigned') %>
+      <% list_color = 'text-primary' %>
+    <% elsif device.list.name.match('Whitelist') %>
+      <% list_color = 'text-success' %>
+    <% elsif device.list.name.match('Blacklist') %>
+      <% list_color = 'text-danger' %>
+    <% else list_color = 'text-warning' %>
     <% end %>
+    <span class="glyphicon <%= device.list.glyph %> <%= list_color %>" aria-hidden="true"></span> 
     <%= @device.list.name %>
   </div>
   <div class='col-md-8'>

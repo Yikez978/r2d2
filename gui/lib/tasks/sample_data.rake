@@ -14,9 +14,10 @@ namespace :db do
 #        s.devices.create!(mac: mac)
 #      end
 #    end
-    List.create(name: 'Unassigned')
-    List.create(name: 'Whitelist')
-    List.create(name: 'Blacklist')
+    #Default Lists loaded via seeds.rb
+    #List.create(name: 'Unassigned', glyph: 'glyphicon-unchecked')
+    #List.create(name: 'Whitelist', glyph: 'glyphicon-thumbs-up')
+    #List.create(name: 'Blacklist', glyph: 'glyphicon-thumbs-down')
     3.times do
       ip = Faker::Internet.ip_v4_address
       name = Faker::Internet.domain_word + ".example.com"
