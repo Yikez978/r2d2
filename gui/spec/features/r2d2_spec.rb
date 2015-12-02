@@ -34,7 +34,7 @@ RSpec.describe 'r2d2', type: :feature do
       #click_link('l2s2')
       #expect(current_path).to eq('/l2s2')
     end
-    it 'should display a table' do
+    it 'displays a table' do
       expect(page).to have_selector('table')
     end
     describe 'table' do
@@ -178,10 +178,10 @@ RSpec.describe 'r2d2', type: :feature do
       visit '/r2d2'
       click_link "#{@server.scopes[0].leases[0].device.mac}"
     end
-    it 'should take you to /leases/:id' do
+    it 'takes you to /leases/:id' do
       expect(current_path).to eq("/leases/#{@server.scopes[0].leases[0].id}")
     end
-    it 'should have the lease MAC in the description in the navbar' do
+    it 'displays the lease MAC in the description in the navbar' do
       expect(page.all('.navbar-text')[0]).to have_content(@server.scopes[0].leases[0].device.mac)
     end
     describe 'displays the device' do
