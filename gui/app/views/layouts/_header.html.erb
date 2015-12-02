@@ -1,9 +1,9 @@
   <header class="navbar navbar-fixed-top navbar-inverse">
     <div class='container'>
       <% if yield(:title).match('Layer') %>
-        <%= link_to yield(:title), '/l2s2', id: "logo" %></li>
+        <%= link_to yield(:title), '/l2s2', id: "logo" %>
       <% else %>
-        <%= link_to yield(:title), '/r2d2', id: "logo" %></li>
+        <%= link_to yield(:title), '/r2d2', id: "logo" %>
       <% end %>
       <div class="container">
         <nav>
