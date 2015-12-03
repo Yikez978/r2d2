@@ -29,6 +29,9 @@ RSpec.describe 'list', type: :feature do
         it 'has a Count column' do
           expect(page.all('th')[2]).to have_content('Count')
         end
+        it 'has a Action column' do
+          expect(page.all('th')[3]).to have_content('Action')
+        end
       end
       describe 'data row' do
         before(:all) do
@@ -49,18 +52,56 @@ RSpec.describe 'list', type: :feature do
           expect(page.all('td')[2]).to have_content('1')
         end
         it 'displays the member count if zero' do
-          expect(page.all('td')[5]).to have_content('0')
+          expect(page.all('td')[6]).to have_content('0')
+        end
+        it 'displays the edit icon' do
+          within(page.all('td')[3]) do
+            element = all('span')[0]
+            expect(element['class']).to match('glyphicon-pencil')
+          end
+        end
+        describe 'clicking the edit icon' do
+          it 'display a modal with the current name' do
+          within(page.all('td')[3]) do
+            all('button')[0].click
+          end
+          expect(page.all('input')).to have_content(List.first.name)
+          end
+        end
+        it 'displays the delete icon' do
+          within(page.all('td')[3]) do
+            element = all('span')[1]
+            expect(element['class']).to match('glyphicon-remove')
+          end
+        end
+        describe 'clicking the delete icon' do
+          it 'reassigns members to unassigned'
+          it 'deletes the list after confirmation'
         end
       end
-      describe 'has pagination controls when table has more than 10 rows' do
-        before(:each) do
-          FactoryGirl.create_list(:list, 11)
-          visit '/lists'
-        end
-        it do
-          expect(page).to have_selector('div.pagination')
-        end
+    end
+    describe 'has pagination controls when table has more than 10 rows' do
+      before(:each) do
+        FactoryGirl.create_list(:list, 11)
+        visit '/lists'
       end
+      after(:each) do
+        List.all.delete_all
+      end
+      it do
+        expect(page).to have_selector('div.pagination')
+      end
+    end
+    describe 'filling out form to add list' do
+      it 'cannot add blank anem'
+      it 'cannot add duplicate name'
+      it 'adds list to lists'
+      it 'assigns the default glyph if not changed'
+      it 'assigns the selected glyph'
+    end
+    describe 'sort list' do
+      describe 'by name'
+      describe 'by count'
     end
   end
 end

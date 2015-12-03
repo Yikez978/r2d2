@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   resources :sweeps, only: [:index, :show]
   resources :devices, only: [:index, :show, :update]
   resources :leases, only: [:show, :index]
-  resources :lists, only: [:index ]
+  resources :lists, only: [:index, :update]
   get "r2d2" => 'leases#index'
   get "l2s2" => 'sweeps#index'
   constraints subdomain: 'api' do

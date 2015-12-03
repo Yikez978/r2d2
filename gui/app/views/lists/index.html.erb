@@ -1,5 +1,6 @@
 <% provide(:title, "Remote Rogue Device Detector") %>
 <% provide(:description, 'Lists') %>
+<%= render 'layouts/edit_list_modal' %>
 <div class='row'>
   <div class='col-md-4 col-md-offset-2'>
     <table class="table table-striped">
@@ -7,6 +8,7 @@
         <th>Glyph</th>
         <th>Name</th>
         <th>Count</th>
+        <th>Action</th>
       </tr></thead>
       <%= render @lists %>
     </table>

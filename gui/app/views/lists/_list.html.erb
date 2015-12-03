@@ -1,5 +1,21 @@
 <tr>
-  <td><span class="glyphicon <%= list.glyph %>"></span></td>
+  <td><span class='glyphicon <%= list.glyph %>'></span></td>
   <td><%= list.name %></td>
   <td><%= Device.where(list: list).count ||= 0 %></td>
+  <td>
+    <% if list.name.match('Unassigned') %>
+      <% list_disabled = 'disabled="disabled"' %>
+    <% elsif list.name.match('Whitelist') %>
+      <% list_disabled = 'disabled="disabled"' %>
+    <% elsif list.name.match('Blacklist') %>
+      <% list_disabled = 'disabled="disabled"' %>
+    <% else list_disabled = '' %>
+    <% end %>
+    <button id='<%= list.name %>' type='button' class="btn btn-link btn-xs" data-toggle="modal" data-target="#list_edit" <%= list_disabled %> data-name="<%= list.name %>">
+      <span class='glyphicon glyphicon-pencil'></span>
+    </button>
+    <button type='button' class="btn btn-link btn-xs" data-toggle="modal" data-target="#list_delete" <%= list_disabled %> >
+      <span class='glyphicon glyphicon-remove'></span>
+    </button>
+  </td>
 </tr>

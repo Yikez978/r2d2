@@ -26,12 +26,14 @@ RSpec.describe List, type: :model do
     it 'can be set to glyphicon-star' do
       list = List.new(name: 'star', glyph: 'glyphicon-star')
       expect(list).to be_valid
-      list.delete
     end
     it 'can be set to glyphicon-eye-open' do
       list = List.new(name: 'star', glyph: 'glyphicon-eye-open')
       expect(list).to be_valid
-      list.delete
+    end
+    it 'cannot be set to glyphicon not defined in the set' do
+      list = List.new(name: 'star', glyph: 'glyphicon-remove')
+      expect(list).to be_invalid
     end
   end
 end
