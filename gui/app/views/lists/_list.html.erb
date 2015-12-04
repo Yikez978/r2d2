@@ -4,16 +4,16 @@
   <td><%= Device.where(list: list).count ||= 0 %></td>
   <td>
     <% if list.name.match('Unassigned') %>
-      <% list_disabled = 'disabled="disabled"' %>
+      <% list_disabled = 'disabled' %>
     <% elsif list.name.match('Whitelist') %>
-      <% list_disabled = 'disabled="disabled"' %>
+      <% list_disabled = 'disabled' %>
     <% elsif list.name.match('Blacklist') %>
-      <% list_disabled = 'disabled="disabled"' %>
+      <% list_disabled = 'disabled' %>
     <% else list_disabled = '' %>
     <% end %>
-    <button id='<%= list.name %>' data-name="<%= list.name %>" data-id="<%= list.id %>" type='button' class="btn btn-link btn-xs" data-toggle="modal" data-target="#list_edit" <%= list_disabled %> >
+    <%= link_to edit_list_path(list), { class: "btn btn_link btn-xs #{list_disabled}" } do %>
       <span class='glyphicon glyphicon-pencil'></span>
-    </button>
+    <% end %>
     <button type='button' class="btn btn-link btn-xs" data-toggle="modal" data-target="#list_delete" <%= list_disabled %> >
       <span class='glyphicon glyphicon-remove'></span>
     </button>

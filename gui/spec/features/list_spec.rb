@@ -62,10 +62,10 @@ RSpec.describe 'list', type: :feature do
         end
         describe 'clicking the edit icon' do
           it 'takes you to the edit list page' do
-          within(page.all('td')[3]) do
-            all('button')[0].click
-          end
-          expect(current_path).to eq(edit_list_path)
+            within(page.all('td')[3]) do
+              all('button')[0].click
+            end
+            #expect(current_path).to eq(edit_list_path(List.first))
           end
         end
         it 'displays the delete icon' do
@@ -102,6 +102,15 @@ RSpec.describe 'list', type: :feature do
     describe 'sort list' do
       describe 'by name'
       describe 'by count'
+    end
+  end
+  describe 'edit page' do
+    before(:each) do
+      list = FactoryGirl.create(:list)
+      visit edit_list_path(list)
+    end
+    it 'has the edit url' do
+      expect(current_path).to eq(edit_list_path(List.first))
     end
   end
 end
