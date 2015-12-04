@@ -6,16 +6,12 @@
         <h4 class="modal-title" id="ModalLabel">Edit List</h4>
       </div>
       <div class="container modal-body">
-        <div class="row col-md-4">
-          <div class="form-group">
-            <input type="text" class="form-control" id="list-name">
-          </div>
-        </div>
-        <div class="row">
-          <div class='col-md-2'>
+        <div class="row col-md-6">
+          <%= form_tag(controller: :lists, method: 'put') do %>
+            <%= text_field_tag(:name) %>
             <button type="submit" class="btn btn-primary pull-right">Apply</button>
             <button type="button" class="btn btn-default pull-right" data-dismiss="modal">Cancel</button>
-          </div>
+          <% end %>
         </div>
       </div>
     </div>

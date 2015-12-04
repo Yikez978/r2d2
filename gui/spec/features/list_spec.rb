@@ -61,11 +61,11 @@ RSpec.describe 'list', type: :feature do
           end
         end
         describe 'clicking the edit icon' do
-          it 'display a modal with the current name' do
+          it 'takes you to the edit list page' do
           within(page.all('td')[3]) do
             all('button')[0].click
           end
-          expect(page.all('input')).to have_content(List.first.name)
+          expect(current_path).to eq(edit_list_path)
           end
         end
         it 'displays the delete icon' do

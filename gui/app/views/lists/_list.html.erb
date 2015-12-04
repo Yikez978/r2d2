@@ -11,7 +11,7 @@
       <% list_disabled = 'disabled="disabled"' %>
     <% else list_disabled = '' %>
     <% end %>
-    <button id='<%= list.name %>' type='button' class="btn btn-link btn-xs" data-toggle="modal" data-target="#list_edit" <%= list_disabled %> data-name="<%= list.name %>">
+    <button id='<%= list.name %>' data-name="<%= list.name %>" data-id="<%= list.id %>" type='button' class="btn btn-link btn-xs" data-toggle="modal" data-target="#list_edit" <%= list_disabled %> >
       <span class='glyphicon glyphicon-pencil'></span>
     </button>
     <button type='button' class="btn btn-link btn-xs" data-toggle="modal" data-target="#list_delete" <%= list_disabled %> >
