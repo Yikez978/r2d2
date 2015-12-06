@@ -92,25 +92,15 @@ RSpec.describe 'list', type: :feature do
         expect(page).to have_selector('div.pagination')
       end
     end
-    describe 'filling out form to add list' do
-      it 'cannot add blank anem'
-      it 'cannot add duplicate name'
-      it 'adds list to lists'
-      it 'assigns the default glyph if not changed'
-      it 'assigns the selected glyph'
+    describe 'clicking the Add button' do
+      it 'takes you to the new list page' do
+        click_link('Add')
+        expect(current_path).to eq(new_list_path)
+      end
     end
     describe 'sort list' do
       describe 'by name'
       describe 'by count'
-    end
-  end
-  describe 'edit page' do
-    before(:each) do
-      list = FactoryGirl.create(:list)
-      visit edit_list_path(list)
-    end
-    it 'has the edit url' do
-      expect(current_path).to eq(edit_list_path(List.first))
     end
   end
 end

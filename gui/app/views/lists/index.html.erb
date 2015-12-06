@@ -3,7 +3,13 @@
 <%= render 'layouts/edit_list_modal' %>
 <div class='row'>
   <div class='col-md-4 col-md-offset-2'>
-    <table class="table table-striped">
+    <% flash.each do |message_type, message| %>
+        <div class="alert alert-<%= message_type %>"><%= message %></div>
+    <% end %>
+    <%= link_to new_list_path, { class: "btn btn_link btn-xs" } do %>
+      <span class='glyphicon glyphicon-plus'></span>
+      Add new List
+    <% end %>    <table class="table table-striped">
       <thead><tr>
         <th>Glyph</th>
         <th>Name</th>
