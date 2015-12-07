@@ -61,11 +61,16 @@ RSpec.describe 'list', type: :feature do
           end
         end
         describe 'clicking the edit icon' do
+          before(:each) do
+            @edit_list = FactoryGirl.create(:list)
+            visit lists_path
+          end
+          after(:each) { @edit_list.delete }
           it 'takes you to the edit list page' do
-            within(page.all('td')[3]) do
-              all('button')[0].click
+            within(page.all('td')[15]) do
+              all('.btn')[0].click
             end
-            #expect(current_path).to eq(edit_list_path(List.first))
+            expect(current_path).to eq(edit_list_path(@edit_list.id))
           end
         end
         it 'displays the delete icon' do
@@ -75,8 +80,52 @@ RSpec.describe 'list', type: :feature do
           end
         end
         describe 'clicking the delete icon' do
-          it 'reassigns members to unassigned'
-          it 'deletes the list after confirmation'
+          before(:each) do
+            @delete_list = FactoryGirl.create(:list)
+            visit lists_path
+            within(page.all('td')[15]) do
+              all('.btn')[1].click
+            end
+          end
+          describe 'on the protected lists' do
+            ['Unassigned', 'Whitelist', 'Blacklist'].each do |l|
+              it 'pops alert that the list cannot be deleted'
+            end
+          end
+          it 'reassigns members to unassigned' do
+            @unassigned_count_b4 = Device.where(list: List.find_by_name('Unassigned')).count
+            FactoryGirl.create(:device, list: @delete_list)
+            accept_confirm do
+              within(page.all('td')[15]) do
+                all('.btn')[1].click
+              end
+            end
+            expect(Device.where(list: List.find_by_name('Unassigned')).count).to eq(@unassigned_count_b4+1)
+          end
+          it 'deletes the list after confirmation' do
+            accept_confirm do
+              within(page.all('td')[15]) do
+                all('.btn')[1].click
+              end
+            end
+            expect(page).not_to have_content(@delete_list.name)
+          end
+          it 'displays success message' do
+            accept_confirm do
+              within(page.all('td')[15]) do
+                all('.btn')[1].click
+              end
+            end
+            expect(page).to have_content("Deleted list named '#{@delete_list_name}'.")
+          end
+          it 'does not delete the list if cancelled' do
+            dismiss_confirm do
+              within(page.all('td')[15]) do
+                all('.btn')[1].click
+              end
+            end
+            expect(page).to have_content(@delete_list.name)
+          end
         end
       end
     end
@@ -100,7 +149,6 @@ RSpec.describe 'list', type: :feature do
     end
     describe 'sort list' do
       describe 'by name'
-      describe 'by count'
     end
   end
 end

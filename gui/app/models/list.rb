@@ -3,7 +3,7 @@ class List < ActiveRecord::Base
   before_validation :default_values
   validates :name,
             presence: true,
-            uniqueness: true
+            uniqueness: { case_sensitive: false }
   validates :glyph,
             inclusion: { in: %w(
               glyphicon-unchecked

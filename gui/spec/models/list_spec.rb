@@ -16,6 +16,12 @@ RSpec.describe List, type: :model do
       expect(list2).to be_invalid
       list.delete
     end
+    it 'is case-insensitive' do
+      list = List.create(name: 'Highlander')
+      list2 = List.new(name: 'highlander')
+      expect(list2).to be_invalid
+      list.delete
+    end
   end
   describe 'glyph' do
     it 'defaults to glyphicon-warning-sign' do

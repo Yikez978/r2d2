@@ -1,6 +1,7 @@
 class ListsController < ApplicationController
   def index
-    @lists = List.paginate(page: params[:page])
+    @search = List.search(params[:q])
+    @lists = @search.result.paginate(page: params[:page])
   end
 
   def edit
@@ -20,7 +21,14 @@ class ListsController < ApplicationController
       flash[:danger] = 'Error'
       render 'new'
     end
-    
+  end
+
+  def destroy
+    @list = List.find(params[:id])
+    Device.where(list: @list.id).update_all(list_id: List.find_by_name('Unassigned'))
+    @list.destroy
+    flash[:success] = "Deleted list named '#{@list.name}'."
+    redirect_to lists_path
   end
 
   def update

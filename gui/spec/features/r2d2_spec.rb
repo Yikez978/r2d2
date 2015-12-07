@@ -21,6 +21,9 @@ RSpec.describe 'r2d2', type: :feature do
     it 'has the program name as the title' do
       expect(page).to have_title('Remote Rogue Device Detector')
     end
+    it 'has a link to Lists' do
+      expect(page).to have_link('Lists', lists_path)
+    end
     it 'has a link r2d2 to root' do
       expect(page).to have_link('Remote Rogue Device Detector', :href => '/r2d2')
     end
@@ -104,43 +107,45 @@ RSpec.describe 'r2d2', type: :feature do
               link_id = @server.scopes[0].leases[0].id.to_s
               find("#L#{link_id}").click
               within(page.all('ul.dropdown-menu')[0]) do
-                expect(all('li')[0]).to have_content('Remove From List')
-                expect(all('li')[1]).to have_content('Add to Whitelist')
-                expect(all('li')[2]).to have_content('Add to Blacklist')
+                i = 0
+                List.all.each do |l|
+                  expect(all('li')[i]).to have_content(l.name)
+                  i = i+1
+                end
               end
             end
-            it 'selecting a "Add to Blacklist"' do
+            it ' and selecting "Blacklist"' do
               @server.scopes[0].leases[0].device.list = List.find_by_name('Unassigned')
               @server.scopes[0].leases[0].device.save
               visit '/r2d2'
               link_id = @server.scopes[0].leases[0].id.to_s
               find("#L#{link_id}").click
               within(page.all('ul.dropdown-menu')[0]) do
-                click_link('Add to Blacklist')
+                click_link('Blacklist')
               end
               @server.reload
               expect(@server.scopes[0].leases[0].device.list).to eq(List.find_by_name('Blacklist'))
             end
-            it 'selecting a "Add to Whitelist"' do
+            it 'and selecting "Whitelist"' do
               @server.scopes[0].leases[0].device.list = List.find_by_name('Unassigned')
               @server.scopes[0].leases[0].device.save
               visit '/r2d2'
               link_id = @server.scopes[0].leases[0].id.to_s
               find("#L#{link_id}").click
               within(page.all('ul.dropdown-menu')[0]) do
-                click_link('Add to Whitelist')
+                click_link('Whitelist')
               end
               @server.reload
               expect(@server.scopes[0].leases[0].device.list).to eq(List.find_by_name('Whitelist'))
             end
-            it 'selecting the "Remove From Any List"' do
+            it 'and selecting "Unassigned"' do
               @server.scopes[0].leases[0].device.list = List.find_by_name('Whitelist')
               @server.scopes[0].leases[0].device.save
               visit '/r2d2'
               link_id = @server.scopes[0].leases[0].id.to_s
               find("#L#{link_id}").click
               within(page.all('ul.dropdown-menu')[0]) do
-                click_link('Remove From List')
+                click_link('Unassigned')
               end
               @server.reload
               expect(@server.scopes[0].leases[0].device.list).to eq(List.find_by_name('Unassigned'))

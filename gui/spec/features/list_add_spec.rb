@@ -37,10 +37,18 @@ RSpec.describe 'list', type: :feature do
         click_button 'Save'
         expect(page).to have_content("Added new list Fred's Angels")
       end
-      it 'has a count of zero'
+      it 'has a count of zero' do
+        fill_in 'Name', with: "A-Team"
+        click_button 'Save'
+        expect(page.all('td')[2]).to have_content('0')
+      end
       it 'assigns the default glyph if not changed'
       it 'assigns the selected glyph'
-      it 'redirects to the lists page'
+      it 'redirects to the lists page' do
+        fill_in 'Name', with: "Team America"
+        click_button 'Save'
+        expect(current_path).to eq(lists_path)
+      end
     end
   end
 end
