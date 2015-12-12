@@ -1,15 +1,17 @@
 require 'rails_helper'
 
 RSpec.describe 'list', type: :feature do
-  describe 'add page' do
-    before(:all) { List.all.delete_all }
+  describe 'new page' do
+    before(:all) do
+      List.all.delete_all
+    end
     before(:each) do
       visit new_list_path
     end
     it 'has the new url' do
       expect(current_path).to eq(new_list_path)
     end
-    describe 'filling out form to add a list' do
+    describe 'filling out Name to add a list' do
       describe 'cannot add' do
         before(:each) { @list = FactoryGirl.create(:list) }
         it 'blank name' do
@@ -23,7 +25,12 @@ RSpec.describe 'list', type: :feature do
           expect(page).to have_content("Name has already been taken")
           #expect(current_path).to eq(new_list_path)
         end
-        it 'case-insensitive duplicate name'
+        it 'case-insensitive duplicate name' do
+          fill_in 'Name', with: @list.name.upcase
+          click_button 'Save'
+          expect(page).to have_content("Name has already been taken")
+          #expect(current_path).to eq(new_list_path)
+        end
       end
       it 'adds the list to lists' do
         list_count = List.count
@@ -42,13 +49,24 @@ RSpec.describe 'list', type: :feature do
         click_button 'Save'
         expect(page.all('td')[2]).to have_content('0')
       end
-      it 'assigns the default glyph if not changed'
-      it 'assigns the selected glyph'
-      it 'redirects to the lists page' do
-        fill_in 'Name', with: "Team America"
+    end
+    describe 'glyph' do
+      before(:each) { fill_in 'Name', with: "Avengers" }
+      after(:each) { Glyph.find_by_name('Avengers').destroy }
+      it 'assigns the default glyph if not changed' do
         click_button 'Save'
-        expect(current_path).to eq(lists_path)
+        expect(List.find_by_name('Avengers').glyph.name).to eq('glyphicon-warning-sign')
+      end
+      it 'assigns the selected glyph' do
+        select('Star', :from => 'glyphs')
+        click_button 'Save'
+        expect(List.find_by_name('Avengers').glyph.name).to eq('glyphicon-star')
       end
     end
+    it 'redirects to the lists page' do
+      fill_in 'Name', with: "Team America"
+      click_button 'Save'
+      expect(current_path).to eq(lists_path)
+      end
   end
 end

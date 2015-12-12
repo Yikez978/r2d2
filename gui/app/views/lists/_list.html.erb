@@ -1,5 +1,5 @@
 <tr>
-  <td><span class='glyphicon <%= list.glyph %>'></span></td>
+  <td><span class='glyphicon <%= list.glyph.name %>'></span></td>
   <td><%= list.name %></td>
   <td><%= Device.where(list: list).count ||= 0 %></td>
   <td>

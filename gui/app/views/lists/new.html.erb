@@ -1,11 +1,12 @@
 <% provide(:title, "Remote Rogue Device Detector") %>
-<% provide(:description, 'Add List') %>
+<% provide(:description, 'New List') %>
 <div class='row'>
   <div class='col-md-4 col-md-offset-2'>
     <%= form_for(@list) do |f| %>
       <%= render 'error_messages' %>
       <%= f.label :name %>
       <%= f.text_field :name, class: 'form-control' %>
+      <%= f.select:glyph_id, Glyph.all.collect { |g| [g.name, g.id] }, { selected: Glyph.find_by_name('glyphicon-warning-sign').id } %>
       <%= f.submit "Save", class: "btn btn-primary pull-right" %>
     <% end %>
   </div>

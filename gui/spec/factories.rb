@@ -6,8 +6,13 @@ FactoryGirl.define do
     "list#{n}"
   end
   
+  factory :glyph do
+    name
+  end
+
   factory :list do
     name
+    glyph
   end
 
   factory :device do

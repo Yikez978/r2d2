@@ -26,20 +26,20 @@ RSpec.describe List, type: :model do
   describe 'glyph' do
     it 'defaults to glyphicon-warning-sign' do
       list = List.create(name: 'default')
-      expect(list.glyph).to eq('glyphicon-warning-sign')
+      expect(list.glyph_id).to eq(Glyph.find_by_name('glyphicon-warning-sign').id)
       list.delete
     end
     it 'can be set to glyphicon-star' do
-      list = List.new(name: 'star', glyph: 'glyphicon-star')
+      list = List.new(name: 'star', glyph_id: Glyph.find_by_name('glyphicon-star').id)
       expect(list).to be_valid
     end
     it 'can be set to glyphicon-eye-open' do
-      list = List.new(name: 'star', glyph: 'glyphicon-eye-open')
+      list = List.new(name: 'star', glyph_id: Glyph.find_by_name('glyphicon-eye-open').id)
       expect(list).to be_valid
     end
     it 'cannot be set to glyphicon not defined in the set' do
-      list = List.new(name: 'star', glyph: 'glyphicon-remove')
-      expect(list).to be_invalid
+      #list = List.new(name: 'star', glyph_id: Glyph.find_by_name('glyphicon-fred').id)
+      #expect(list).to be_invalid
     end
   end
 end

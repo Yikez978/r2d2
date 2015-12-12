@@ -6,6 +6,7 @@
       <%= render 'error_messages' %>
       <%= f.label :name %>
       <%= f.text_field :name, class: 'form-control' %>
+      <%= f.select :glyph_id, Glyph.all.collect { |g| [g.name, g.id] } %>
       <%= f.submit "Save", class: "btn btn-primary pull-right" %>
     <% end %>
   </div>

@@ -11,7 +11,7 @@
           <% list_color = 'text-danger' %>
         <% else list_color = 'text-warning' %>
         <% end %>
-        <span class="glyphicon <%= lease.device.list.glyph %> <%= list_color %>" aria-hidden="true"></span>
+        <span class="glyphicon <%= lease.device.list.glyph.name %> <%= list_color %>" aria-hidden="true"></span>
       </a>
       <ul class="dropdown-menu">
         <% List.all.each do |l| %>
@@ -21,7 +21,7 @@
           <% else  list_color = 'text-warning'  %>
           <% end %>
         <li><%= link_to(device_path(lease.device, params: { list: l }), method: :put) do %>
-              <span class="glyphicon <%= l.glyph %> <%= list_color %>" aria-hidden="true"></span>  <%= l.name %>
+              <span class="glyphicon <%= l.glyph.name %> <%= list_color %>" aria-hidden="true"></span>  <%= l.name %>
             <% end %>
         </li>
         <% end %>

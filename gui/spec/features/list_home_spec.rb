@@ -42,7 +42,7 @@ RSpec.describe 'list', type: :feature do
         it 'displays the list glyph' do
           within(page.all('td')[0]) do
             element = all('span')[0]
-            expect(element['class']).to match(List.first.glyph)
+            expect(element['class']).to match(List.first.glyph.name)
           end
         end
         it 'displays the list name' do

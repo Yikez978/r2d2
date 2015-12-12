@@ -5,8 +5,18 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
+
+Glyph.create([
+               { name: 'glyphicon-unchecked' },
+               { name: 'glyphicon-thumbs-up' },
+               { name: 'glyphicon-thumbs-down' },
+               { name: 'glyphicon-warning-sign' },
+               { name: 'glyphicon-eye-open' },
+               { name: 'glyphicon-star' }
+              ])
+
 List.create([
-               { name: 'Unassigned', glyph: 'glyphicon-unchecked' },
-               { name: 'Whitelist', glyph: 'glyphicon-thumbs-up' },
-               { name: 'Blacklist', glyph: 'glyphicon-thumbs-down' }
+               { name: 'Unassigned', glyph_id: Glyph.find_by_name('glyphicon-unchecked').id },
+               { name: 'Whitelist', glyph_id: Glyph.find_by_name('glyphicon-thumbs-up').id },
+               { name: 'Blacklist', glyph_id: Glyph.find_by_name('glyphicon-thumbs-down').id }
             ])
