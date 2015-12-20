@@ -21,16 +21,23 @@ FactoryGirl.define do
     notes Faker::Lorem.sentence(3)
   end
 
+  factory :node do
+    mac  { 6.times.map{ rand(256) }.map{ |d| '%02x' % d }.join(':').to_s }
+    ip Faker::Internet.ip_v4_address
+  end
+
   factory :sweep do
     cidr = (16..29).to_a
     ip = Faker::Internet.ip_v4_address
-    description NetAddr::CIDR.create("#{ip}/#{cidr.sample}").to_s
+    cidr4 = NetAddr::CIDR.create("#{ip}/#{cidr.sample}")
+    description cidr4.to_s
     transient do
-      device_count 1
+      node_count 1
     end
+    ip_array = cidr4.enumerate
     after(:create) do |sweep, evaluator|
 #      create_list(:result, evaluator.device_count, sweep: sweep)
-      evaluator.device_count.times  { sweep.devices << create(:device) }
+      evaluator.node_count.times  { sweep.nodes << create(:node, ip: ip_array.sample) }
     end
   end
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151212154756) do
+ActiveRecord::Schema.define(version: 20151219164019) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -56,10 +56,17 @@ ActiveRecord::Schema.define(version: 20151212154756) do
 
   add_index "lists", ["glyph_id"], name: "index_lists_on_glyph_id", using: :btree
 
+  create_table "nodes", force: :cascade do |t|
+    t.string   "mac"
+    t.string   "ip"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "results", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer  "device_id"
+    t.integer  "node_id"
     t.integer  "sweep_id"
   end
 

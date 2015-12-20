@@ -14,10 +14,6 @@ namespace :db do
 #        s.devices.create!(mac: mac)
 #      end
 #    end
-    #Default Lists loaded via seeds.rb
-    #List.create(name: 'Unassigned', glyph: 'glyphicon-unchecked')
-    #List.create(name: 'Whitelist', glyph: 'glyphicon-thumbs-up')
-    #List.create(name: 'Blacklist', glyph: 'glyphicon-thumbs-down')
     3.times do
       ip = Faker::Internet.ip_v4_address
       name = Faker::Internet.domain_word + ".example.com"
@@ -30,6 +26,7 @@ namespace :db do
                                       mask: cidr4.wildcard_mask,
                                       description: Faker::Address.street_address,
                                       comment: Faker::Lorem.sentence(3))
+        sweep = Sweep.create(description: cidr4.to_s)
         rand(cidr4.size-2).times do
           server.scopes.last.leases << Lease.create(ip: ip_array.sample,
                                                     device: Device.create(mac: 6.times.map{ rand(256) }.map{ |d| '%02x' % d }.join(':').to_s,
@@ -42,6 +39,8 @@ namespace :db do
                                                     expiration: Faker::Time.between(2.days.ago, Faker::Time.forward(23, :morning)),
                                                     mask: mask,
                                                     kind: ['D','B','U','R','N'].sample)
+          sweep.nodes << Node.create(ip: server.scopes.last.leases.last.ip,
+                                     mac: server.scopes.last.leases.last.device.mac)
         end
       end
     end

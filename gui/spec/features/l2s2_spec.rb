@@ -2,11 +2,13 @@ require 'rails_helper'
 
 RSpec.describe "l2s2", type: :feature do
   describe "GET /l2s2" do
+    before(:all) { Sweep.all.delete_all }
     describe 'home page' do
       let!(:sweep) { FactoryGirl.create(:sweep) }
       before(:each) do
         visit '/l2s2'
       end
+      after(:each) { Sweep.all.delete_all }
       it 'should have the program name' do
         expect(page).to have_title('Layer 2 Sweeper Service')
       end
@@ -38,7 +40,7 @@ RSpec.describe "l2s2", type: :feature do
             expect(page.all('th')[1]).to have_content('Date')
           end
           it 'should have Device Count' do
-            expect(page.all('th')[2]).to have_content('Device Count')
+            expect(page.all('th')[2]).to have_content('Node Count')
           end
         end
         describe 'data row' do
@@ -51,22 +53,22 @@ RSpec.describe "l2s2", type: :feature do
           it 'should display the date' do
             expect(page.all('td')[1]).to have_content(sweep.created_at)
           end
-          it 'should display the number of devices' do
-            expect(page.all('td')[2]).to have_content(sweep.devices.count)
+          it 'should display the number of nodes' do
+            expect(page.all('td')[2]).to have_content(sweep.nodes.count)
           end
         end
         describe 'should be sortable' do
           it 'by description'
           it 'by date'
-          it 'by device count'
+          it 'by node count'
         end
       end
       describe 'big table' do
         before(:all) { 10.times { FactoryGirl.create(:sweep) } }
         #before(:all) { FactoryGirl.create(:sweep, device_count: 10) }
         after(:all) do
-          Sweep.delete_all
-          Device.delete_all
+          Sweep.all.delete_all
+          Node.all.delete_all
         end
         it 'should paginate if more than 10 rows' do
           expect(page).to have_selector('div.pagination')
@@ -96,13 +98,13 @@ RSpec.describe "l2s2", type: :feature do
       end
       describe 'data row' do
         it 'should have a link to display the details' do
-          expect(page.find_link(sweep.devices[0].mac,"/devices/#{sweep.devices[0].id}"))
+          expect(page.find_link(sweep.nodes[0].mac,"/nodes/#{sweep.nodes[0].id}"))
         end
         it 'should display the MAC' do
-          expect(page.all('td')[0]).to have_content(sweep.devices[0].mac)
+          expect(page.all('td')[0]).to have_content(sweep.nodes[0].mac)
         end
         it 'should display the IP' do
-          expect(page.all('td')[1]).to have_content(sweep.devices[0].ip)
+          expect(page.all('td')[1]).to have_content(sweep.nodes[0].ip)
         end
       end
     end
@@ -111,13 +113,13 @@ RSpec.describe "l2s2", type: :feature do
     let!(:sweep) { FactoryGirl.create(:sweep) }
     before(:each) do
       visit "/sweeps/#{sweep.id}"
-      click_link(sweep.devices[0].mac)
+      click_link(sweep.nodes[0].mac)
     end
-    it 'should go to /devices/:id' do
-      expect(current_path).to eq("/devices/#{sweep.devices[0].id}")
+    it 'should go to /nodes/:id' do
+      expect(current_path).to eq("/nodes/#{sweep.nodes[0].id}")
     end
-    it 'should have the device MAC in the description in the navbar' do
-      expect(page.all('.navbar-text')[0]).to have_content(sweep.devices[0].mac)
+    it 'should have the node MAC in the description in the navbar' do
+      expect(page.all('.navbar-text')[0]).to have_content(sweep.nodes[0].mac)
     end
     describe 'table' do
       describe 'headings' do
@@ -130,15 +132,15 @@ RSpec.describe "l2s2", type: :feature do
       end
       describe 'data row' do
         it 'should display the IP' do
-          expect(page.all('td')[0]).to have_content(sweep.devices[0].ip)
+          expect(page.all('td')[0]).to have_content(sweep.nodes[0].ip)
         end
         it 'should display the Sweep timestamp' do
-          expect(page.all('td')[1]).to have_content(sweep.devices[0].created_at)
+          expect(page.all('td')[1]).to have_content(sweep.nodes[0].created_at)
         end
         # the next test is bad - passes when it shouldn't
         # need to create multiple sweeps and devices?
         it 'should have a link to the Sweep' do
-          expect(page.find_link(sweep.devices[0].created_at,"/sweeps/#{sweep.id}"))
+          expect(page.find_link(sweep.nodes[0].created_at,"/sweeps/#{sweep.id}"))
         end
       end
     end

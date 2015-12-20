@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   root 'sweeps#index'
   resources :sweeps, only: [:index, :show]
+  resources :nodes, only: [:show]
   resources :devices, only: [:index, :show, :update]
   resources :leases, only: [:show, :index]
   resources :lists, only: [:index, :edit, :show, :update, :new, :create, :destroy]

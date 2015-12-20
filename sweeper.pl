@@ -93,7 +93,7 @@ while (<ARP>) {
   }
 }
 
-my $json = '{"sweep":{"description":"' . "$network_ip/$cidr" . '","devices_attributes":[';
+my $json = '{"sweep":{"description":"' . "$network_ip/$cidr" . '","nodes_attributes":[';
 foreach my $ip (keys(%arpt)) {
 #  print STDOUT "{ ip: '$ip', mac: '$arpt{$ip}'}\n";
   $json .= '{"ip":"' . $ip . '","mac":"' . $arpt{$ip} . '"},';
@@ -120,6 +120,7 @@ sub update_db {
   my $json = shift;
   my $ua = LWP::UserAgent->new;
   my $server_endpoint = "http://api.r2d2.com:3000/api/sweeps";
+  #my $server_endpoint = "https://api.strong-stone-3754.herokuapp.com/sweeps"; # does this work?
 
   # set custom HTTP request header fields
   my $req = HTTP::Request->new(POST => $server_endpoint);

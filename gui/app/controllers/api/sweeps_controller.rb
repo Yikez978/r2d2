@@ -11,7 +11,7 @@ module API
     
     private
       def sweep_params
-        params.require(:sweep).permit(:description, devices_attributes: [:mac, :ip])
+        params.require(:sweep).permit(:description, nodes_attributes: [:mac, :ip])
       end
   end
 end
