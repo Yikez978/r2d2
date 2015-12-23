@@ -2,7 +2,7 @@
 <% provide(:description, 'Lists') %>
 <%= render 'layouts/edit_list_modal' %>
 <div class='row'>
-  <div class='col-md-4 col-md-offset-2'>
+  <div class='col-md-4 col-md-offset-1'>
     <% flash.each do |message_type, message| %>
         <div class="alert alert-<%= message_type %>"><%= message %></div>
     <% end %>
