@@ -14,7 +14,7 @@ namespace :db do
 #        s.devices.create!(mac: mac)
 #      end
 #    end
-    3.times do
+    2.times do
       ip = Faker::Internet.ip_v4_address
       name = Faker::Internet.domain_word + ".example.com"
       server = Server.create(ip: ip, name: name)
