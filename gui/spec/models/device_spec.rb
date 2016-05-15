@@ -1,12 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Device, type: :model do
-  before(:all) do
-    Lease.all.destroy_all
-    @list = List.find_by_name('Unassigned')
-  end
-  after(:all) do
-    Device.all.destroy_all
+  before(:each) do
+    @list = FactoryGirl.create(:list, name: 'Unassigned')
   end
   
   describe 'is invalid if ' do

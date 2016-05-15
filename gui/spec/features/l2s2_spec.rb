@@ -2,7 +2,6 @@ require 'rails_helper'
 
 RSpec.describe "l2s2", type: :feature do
   describe "GET /l2s2" do
-    before(:all) { Sweep.all.delete_all }
     describe 'home page' do
       let!(:sweep) { FactoryGirl.create(:sweep) }
       before(:each) do

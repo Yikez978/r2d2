@@ -1,6 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe List, type: :model do
+  before(:each) do
+    FactoryGirl.create(:glyph, name: 'glyphicon-warning-sign')
+    FactoryGirl.create(:glyph, name: 'glyphicon-thumbs-up')
+    FactoryGirl.create(:glyph, name: 'glyphicon-star')
+    FactoryGirl.create(:glyph, name: 'glyphicon-eye-open')
+  end
   describe 'name' do
     it 'is invalid if name is nil' do
       list = List.new(name: nil)

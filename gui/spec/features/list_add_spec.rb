@@ -2,10 +2,10 @@ require 'rails_helper'
 
 RSpec.describe 'list', type: :feature do
   describe 'new page' do
-    before(:all) do
-      List.all.delete_all
-    end
     before(:each) do
+      FactoryGirl.create(:glyph, name: 'glyphicon-warning-sign')
+      FactoryGirl.create(:glyph, name: 'glyphicon-star')
+      @list = FactoryGirl.create(:list)
       visit new_list_path
     end
     it 'has the new url' do
@@ -13,7 +13,6 @@ RSpec.describe 'list', type: :feature do
     end
     describe 'filling out Name to add a list' do
       describe 'cannot add' do
-        before(:each) { @list = FactoryGirl.create(:list) }
         it 'blank name' do
           click_button 'Save'
           expect(page).to have_content("Name can't be blank")
@@ -52,13 +51,12 @@ RSpec.describe 'list', type: :feature do
     end
     describe 'glyph' do
       before(:each) { fill_in 'Name', with: "Avengers" }
-      after(:each) { Glyph.find_by_name('Avengers').destroy }
       it 'assigns the default glyph if not changed' do
         click_button 'Save'
         expect(List.find_by_name('Avengers').glyph.name).to eq('glyphicon-warning-sign')
       end
       it 'assigns the selected glyph' do
-        select('Star', :from => 'glyphs')
+        select('glyphicon-star', :from => 'list_glyph_id')
         click_button 'Save'
         expect(List.find_by_name('Avengers').glyph.name).to eq('glyphicon-star')
       end

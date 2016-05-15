@@ -1,18 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe 'r2d2', type: :feature do
-  before(:all) do
-    Lease.all.destroy_all
-    Device.all.destroy_all
-    Scope.all.destroy_all
-    Server.all.destroy_all
+  let!(:thumbs_up) { FactoryGirl.create(:glyph, name: 'glyphicon-thumbs-up') }
+  let!(:thumbs_down) { FactoryGirl.create(:glyph, name: 'glyphicon-thumbs-down') }
+  let!(:unchecked) { FactoryGirl.create(:glyph, name: 'glyphicon-unchecked') }
+
+  before(:each) do
+    FactoryGirl.create(:list, name: 'Unassigned', glyph: unchecked)
+    FactoryGirl.create(:list, name: 'Whitelist', glyph: thumbs_up)
+    FactoryGirl.create(:list, name: 'Blacklist', glyph: thumbs_down)
     @server = FactoryGirl.create(:server, scope_count: 1)
-  end
-  after(:all) do
-    Lease.all.destroy_all
-    Device.all.destroy_all
-    Scope.all.destroy_all
-    Server.all.destroy_all
   end
   describe 'GET /r2d2' do
     before(:each) do
