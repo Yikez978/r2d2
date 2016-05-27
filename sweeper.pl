@@ -1,7 +1,6 @@
 #! /usr/bin/perl
 # Written by Eric McCullough
 # TODO:
-#   use NetPacket::ARP instead of system arp -an
 #   thread support?
 #   MAC OUI lookup
 #   loop every x seconds/minutes/hours
@@ -13,46 +12,33 @@ use strict;
 use Net::CIDR::Set;
 use Net::Ping;
 use JSON;
+use Net::Pcap;
+use Net::Netmask; # for cidr
+use IO::Interface::Simple; # for my_ip and netmask
+use Net::Libdnet::Route;  # for gateway
+use Net::Libdnet::Arp; # for reading arp table
 
+use c3p0; # shared subroutines
+my ($year, $mon, $mday, $hour, $min);
 my ($my_ip, $network_ip, $ip, $mask, $cidr, $gateway, @ips, %arpt);
-my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst);
 
-open IFCONFIG, "/sbin/ifconfig eth0|" or die;
-while (<IFCONFIG>) {
-  chomp;
-  if (/inet addr:([\d\.]+)  Bcast:([\d\.]+)  Mask:([\d\.]+)/) {
-    $my_ip = $1;
-    $mask = $3;
-    if ($mask eq "255.255.255.252")    { $cidr = '30'; }
-    elsif ($mask eq "255.255.255.248") { $cidr = '29'; }
-    elsif ($mask eq "255.255.255.240") { $cidr = '28'; }
-    elsif ($mask eq "255.255.255.224") { $cidr = '27'; }
-    elsif ($mask eq "255.255.255.192") { $cidr = '26'; }
-    elsif ($mask eq "255.255.255.128") { $cidr = '25'; }
-    elsif ($mask eq "255.255.255.0")   { $cidr = '24'; }
-    elsif ($mask eq "255.255.254.0")   { $cidr = '23'; }
-    elsif ($mask eq "255.255.252.0")   { $cidr = '22'; }
-    elsif ($mask eq "255.255.248.0")   { $cidr = '21'; }
-    elsif ($mask eq "255.255.240.0")   { $cidr = '20'; }
-    else { print "failed to convert mask\n"; }
-  }
-}
+my $if = IO::Interface::Simple->new('eth0');
+$my_ip = $if->address;
+$mask = $if->netmask;
+# $my_mac = $if->hwaddr;
+$cidr = Net::Netmask->new($if->address, $if->netmask);
 
-open NETSTAT, "/bin/netstat -rn|" or die;
-while (<NETSTAT>) {
-  if (/^0.0.0.0 +([\d\.]+)/) {
-    $gateway = $1;
-  }
-}
+my $route_table = Net::Libdnet::Route->new;
+$gateway = $route_table->get('0.0.0.0');
 
-my $set = Net::CIDR::Set->new("$my_ip/$cidr");
+my $set = Net::CIDR::Set->new("$cidr");
 if ($gateway eq '') {
   $gateway = 'undefined';
 } else {
-#  $set->remove("$gateway/32");
+#  $set->remove($gateway);
 }
 
-print STDERR "My IP is $my_ip\nThe mask is $mask which is /$cidr in CIDR notation\nThe gateway is $gateway\n";
+print STDERR "My IP is $my_ip\nThe mask is $mask\nThe netblock in CIDR notation is $cidr\nThe gateway is $gateway\n";
 $set->remove("$my_ip/32");
 my $iter = $set->iterate_addresses;
 # make array of IP's mainly so we can remove the network and broadcast IP's
@@ -63,15 +49,23 @@ while ( my $ip = $iter->() ) {
 $ip = pop @ips;
 print STDERR "Skipping $ip as the broadcast address\n";
 $network_ip = shift @ips;
-print STDERR "Skipping $ip as the network address\n";
+print STDERR "Skipping $network_ip as the network address\n";
 
-gettime();
+($year, $mon, $mday, $hour, $min) = gettime();
 print STDERR "Looking for possible rogue hosts at $hour:$min of $mon/$mday/$year\n\n";
+
 my $p = Net::Ping->new("syn", 1); # the second parm is timeout in seconds
 $p->{port_number} = 4445; # doesn't matter what port, we just want the ARP response.
 foreach my $ip (@ips) {
 #  print STDERR "$ip\n";
   $p->ping($ip);
+}
+
+my $arp_table = Net::Libdnet::Arp->new;
+$arp_table->loop(\&arp_print);
+sub arp_print {
+   my $e = shift;
+   $arpt{$e->{arp_pa}} = $e->{arp_ha};
 }
 
 while (my ($host,$rtt,$ip) = $p->ack) {
@@ -85,15 +79,7 @@ while (my ($host,$rtt,$ip) = $p->ack) {
 }
 $p->close();
 
-open ARP, "arp -an|";
-while (<ARP>) {
-  next if /<incomplete>/;
-  if (/\(([\d\.]+)\) at ([a-f0-9:]+) /) {
-    $arpt{$1} = $2;
-  }
-}
-
-my $json = '{"sweep":{"description":"' . "$network_ip/$cidr" . '","nodes_attributes":[';
+my $json = '{"sweep":{"description":"' . "$cidr" . '","nodes_attributes":[';
 foreach my $ip (keys(%arpt)) {
 #  print STDOUT "{ ip: '$ip', mac: '$arpt{$ip}'}\n";
   $json .= '{"ip":"' . $ip . '","mac":"' . $arpt{$ip} . '"},';
@@ -102,18 +88,8 @@ chop $json; # remove trailing comma
 $json .= "]}}";
 update_db($json);
 
-gettime();
+($year, $mon, $mday, $hour, $min) = gettime();
 print STDERR "Completed scan at $hour:$min of $mon/$mday/$year\n\n";
-
-sub gettime {
-  ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
-  $year += 1900;
-  $mon += 1;
-  if ($mon < 10) {$mon = "0" . $mon;}
-  if ($mday < 10) {$mday = "0" . $mday;}
-  if ($hour < 10) {$hour = "0" . $hour;}
-  if ($min < 10) {$min = "0" . $min;}
-}
 
 sub update_db {
   use LWP::UserAgent;

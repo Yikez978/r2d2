@@ -8,6 +8,7 @@ use Getopt::Long;
 use Win32::NetResource qw(:DEFAULT NetShareGetInfo GetError);
 use c3p0; # shared subroutines
 
+my ($year, $mon, $mday, $hour, $min);
 @dhcpservers = (
   '13.15.19.14',
 );
@@ -64,7 +65,7 @@ foreach $server (@dhcpservers) { # check that the server IP is a valid format
 &loadVendorCodes;
 
 while (1) {
-  &gettime; # used for timestamping filenames
+  ($year, $mon, $mday, $hour, $min) = &gettime; # used for timestamping filenames
 
   &getMAClist( "sccm.txt", \%sccmMac, 0 ); # not sure if this'll work with current sccm.txt format
   &getMAClist( "whitelist.txt", \%whitelist, 0 );
@@ -333,7 +334,7 @@ while (1) {
     }
     close GOODMACS;
   }
-  &gettime;
+  ($year, $mon, $mday, $hour, $min) = &gettime;
   print STDERR "Completed at $hour:$min of $mon/$mday/$year\n";
   undef @scopelist; undef %scopes; undef %reservedips; undef $totalscopes;
   undef %whitelist; undef %blacklist; undef %sccmMac;

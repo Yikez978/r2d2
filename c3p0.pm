@@ -112,6 +112,7 @@ sub gettime {
   if ($mday < 10) { $mday = "0" . $mday; }
   if ($hour < 10) { $hour = "0" . $hour; }
   if ($min < 10) { $min = "0" . $min; }
+  return ($year, $mon, $mday, $hour, $min);
 }
 
 sub loadVendorCodes {
