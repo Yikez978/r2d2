@@ -1,5 +1,7 @@
 class Lease < ActiveRecord::Base
-  validates :ip, presence: true
+  require 'resolv'
+  validates :ip, presence: true,
+                 format: { :with => Resolv::IPv4::Regex }
   validates :device, presence: true
   validates :expiration, presence: true
   belongs_to :scope
