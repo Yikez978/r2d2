@@ -1,12 +1,13 @@
 Rails.application.routes.draw do
-  root 'sweeps#index'
+  root 'leases#index'
+  resources :sweepers, only: [:index, :edit, :show, :update, :new, :create, :destroy]
   resources :sweeps, only: [:index, :show]
   resources :nodes, only: [:show]
   resources :devices, only: [:index, :show, :update]
   resources :leases, only: [:show, :index]
   resources :lists, only: [:index, :edit, :show, :update, :new, :create, :destroy]
   get "r2d2" => 'leases#index'
-  get "l2s2" => 'sweeps#index'
+  get "l2s2" => 'sweepers#index'
   constraints subdomain: 'api' do
     namespace :api do #, path: '/'  do
       resources :devices, only: [:index, :create, :show]

@@ -26,6 +26,9 @@ namespace :db do
                                       mask: cidr4.wildcard_mask,
                                       description: Faker::Address.street_address,
                                       comment: Faker::Lorem.sentence(3))
+        sweeper = Sweeper.create(ip: ip_array.sample,
+                       description: cidr4.to_s,
+                       mac: 6.times.map{ rand(256) }.map{ |d| '%02x' % d }.join(':').to_s)
         sweep = Sweep.create(description: cidr4.to_s)
         rand(cidr4.size-2).times do
           server.scopes.last.leases << Lease.create(ip: ip_array.sample,
@@ -41,6 +44,8 @@ namespace :db do
                                                     kind: ['D','B','U','R','N'].sample)
           sweep.nodes << Node.create(ip: server.scopes.last.leases.last.ip,
                                      mac: server.scopes.last.leases.last.device.mac)
+          sweep.nodes << Node.create(ip: sweeper.ip,
+                                     mac: sweeper.mac)
         end
       end
     end

@@ -1,0 +1,7 @@
+<% provide(:title, "Layer 2 Sweeper Service") %>
+<% provide(:description, @sweeper.description) %>
+<table class="table table-striped">
+  <thead><tr><th>Sweep</th><th>Timestamp</th><th>Node Count</th></tr></thead>
+  <%= render @sweeps %>
+</table>
+<%= will_paginate @sweeps%>

@@ -49,6 +49,12 @@ FactoryGirl.define do
     device
   end
 
+  factory :sweeper do
+    description '1.1.1.0/24'
+    ip '1.1.1.1'
+    mac { 6.times.map{ rand(256) }.map{ |d| '%02x' % d }.join(':').to_s }
+  end
+
   factory :scope do
     ip   Faker::Internet.ip_v4_address
     mask '255.255.255.0'
@@ -61,6 +67,7 @@ FactoryGirl.define do
     end
     after(:create) do |scope, evaluator|
       evaluator.lease_count.times  { scope.leases << create(:lease, ip: ip_array.sample) }
+      sweeper.create(ip: ip_array.sample, description: evaluator.description)
     end
   end
 
