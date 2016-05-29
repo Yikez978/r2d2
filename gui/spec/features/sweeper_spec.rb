@@ -56,31 +56,5 @@ RSpec.describe "l2s2 sweeper", type: :feature do
     it 'should go to /sweeps/:id' do
       expect(current_path).to eq("/sweeps/#{sweep.id}")
     end
-    it 'should have the sweep description in the description in the navbar' do
-      expect(page.all('.navbar-text')[0]).to have_content(sweep.description)
-    end
-    describe 'table' do
-      describe 'headings' do
-        it 'should have MAC' do
-          expect(page.all('th')[0]).to have_content('MAC')
-        end
-        it 'should have IP' do
-          expect(page.all('th')[1]).to have_content('IP')
-        end
-      end
-      describe 'data row' do
-        it 'should display the node MAC' do
-          expect(page.all('td')[0]).to have_content(sweep.nodes[0].mac)
-        end
-        it 'should display the node IP' do
-          expect(page.all('td')[1]).to have_content(sweep.nodes[0].ip)
-        end
-        # the next test is bad - passes when it shouldn't
-        # need to create multiple sweeps and devices?
-        it 'should have a link to a node' do
-          expect(page.find_link(sweep.nodes[0].mac,"/nodes/#{sweep.nodes[0].id}"))
-        end
-      end
-    end
   end
 end

@@ -74,6 +74,16 @@ RSpec.describe "l2s2", type: :feature do
           expect(page).to have_selector('div.pagination')
         end
       end
+      describe 'clicking a sweeper description' do
+        let!(:sweeper) { FactoryGirl.create(:sweeper) }
+        before(:each) do
+          visit '/sweepers'
+          click_link(sweeper.description)
+        end
+        it 'should go to /sweeps/:id' do
+          expect(current_path).to eq("/sweepers/#{sweeper.id}")
+        end
+      end
     end
   end
 end
