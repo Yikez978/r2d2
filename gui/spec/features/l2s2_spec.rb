@@ -12,8 +12,8 @@ RSpec.describe "l2s2", type: :feature do
       it 'should have link l2s2 to root' do
         expect(page).to have_link('Layer 2 Sweeper Service', :href => '/l2s2')
       end
-      it 'should have Home as the page description in the navbar' do
-        expect(page.all('.navbar')[0]).to have_content('Home')
+      it 'should have Top Level as the page description in the navbar' do
+        expect(page.all('.navbar')[0]).to have_content('Top Level')
       end
       it 'should have link to r2d2' do
         expect(page).to have_link('r2d2', :href => '/r2d2')
@@ -31,7 +31,7 @@ RSpec.describe "l2s2", type: :feature do
         end
         describe 'header' do
           it 'has a Description column' do
-            expect(page.all('th')[0]).to have_content('Description')
+            expect(page.all('th')[0]).to have_content('Sweeper Description')
           end
           it 'has an IP address column' do
             expect(page.all('th')[1]).to have_content('IP')
@@ -70,7 +70,6 @@ RSpec.describe "l2s2", type: :feature do
           visit "/sweepers"
         end
         it 'should paginate if more than 10 rows' do
-          print page.html
           expect(page).to have_selector('div.pagination')
         end
       end
