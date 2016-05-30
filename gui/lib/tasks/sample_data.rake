@@ -22,7 +22,7 @@ namespace :db do
         mask = mask_array.sample.to_s
         cidr4 = NetAddr::CIDR.create(Faker::Internet.ip_v4_address+'/'+mask)
         ip_array = cidr4.enumerate
-        server.scopes << Scope.create(ip: cidr4.to_s,
+        server.scopes << Scope.create(ip: cidr4.network,
                                       mask: cidr4.wildcard_mask,
                                       description: Faker::Address.street_address,
                                       comment: Faker::Lorem.sentence(3))
@@ -46,6 +46,10 @@ namespace :db do
                                      mac: server.scopes.last.leases.last.device.mac)
           sweep.nodes << Node.create(ip: sweeper.ip,
                                      mac: sweeper.mac)
+        end
+        rand(12).times do
+          sweepdup = Sweep.create(description: cidr4.to_s, created_at: Faker::Time.between(2.days.ago, Faker::Time.backward(1.hour)))
+          sweepdup.nodes = sweep.nodes
         end
       end
     end
