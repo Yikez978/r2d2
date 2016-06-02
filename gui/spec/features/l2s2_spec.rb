@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "l2s2", type: :feature do
   describe "GET /l2s2" do
-    describe 'home page' do
+    describe 'Top Level page' do
       before(:each) do
         visit '/l2s2'
       end
@@ -57,6 +57,9 @@ RSpec.describe "l2s2", type: :feature do
           it 'displays the sweeper MAC address' do
             expect(page.all('td')[2]).to have_content(sweeper.mac)
           end
+          it 'has an Action column' do
+            expect(page.all('th')[3]).to have_content('Action')
+          end
         end
         describe 'should be sortable' do
           it 'by description'
@@ -81,6 +84,12 @@ RSpec.describe "l2s2", type: :feature do
         end
         it 'should go to /sweeps/:id' do
           expect(current_path).to eq("/sweepers/#{sweeper.id}")
+        end
+      end
+      describe 'clicking the Add button' do
+        it 'takes you to the new sweeper page' do
+          click_link('Add')
+          expect(current_path).to eq(new_sweeper_path)
         end
       end
     end

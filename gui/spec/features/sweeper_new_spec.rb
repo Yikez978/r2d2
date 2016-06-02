@@ -1,0 +1,64 @@
+require 'rails_helper'
+
+RSpec.describe 'sweeper', type: :feature do
+  describe 'new page' do
+    before(:each) do
+      visit new_sweeper_path
+    end
+    it 'has the new url' do
+      expect(current_path).to eq(new_sweeper_path)
+    end
+    describe 'filling out form to add a sweeper' do
+      describe 'cannot add with' do
+        it 'blank MAC' do
+          click_button 'Save'
+          expect(page).to have_content("Mac can't be blank")
+        end
+        it 'duplicate MAC' do
+          sweep = FactoryGirl.create(:sweeper, mac: '11:22:33:44:55:66')
+          fill_in 'sweeper_mac', with: sweep.mac
+          click_button 'Save'
+          expect(page).to have_content("Mac has already been taken")
+        end
+        it 'Invalid IP' do
+          fill_in 'sweeper_ip', with: '1.1.1'
+          click_button 'Save'
+          expect(page).to have_content("Ip is invalid")
+        end
+      end
+      describe 'adds it to the sweepers' do
+        before(:each) do
+          visit new_sweeper_path
+          fill_in 'sweeper_mac', with: '11:22:33:44:55:66'
+          fill_in 'sweeper_description', with: '1.1.1.0/24'
+          fill_in 'sweeper_ip', with: '1.1.1.1'
+        end
+        it 'increases the sweeper count by one' do
+          sweeper_count = Sweeper.count
+          click_button 'Save'
+          expect(Sweeper.count).to eq(sweeper_count+1)
+        end
+        it 'displays success message' do
+          click_button 'Save'
+          expect(page).to have_content("Added new sweeper 11:22:33:44:55:66")
+        end
+        it 'saves the MAC' do
+          click_button 'Save'
+          expect(Sweeper.find_by_mac('11:22:33:44:55:66').valid?).to eq(true)
+        end
+        it 'saves the IP' do
+          click_button 'Save'
+          expect(Sweeper.find_by_ip('1.1.1.1').valid?).to eq(true)
+        end
+        it 'saves the description' do
+          click_button 'Save'
+          expect(Sweeper.find_by_description('1.1.1.0/24').valid?).to eq(true)
+        end
+        it 'redirects to the sweepers page' do
+          click_button 'Save'
+          expect(current_path).to eq(sweepers_path)
+        end
+      end
+    end
+  end
+end

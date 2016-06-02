@@ -1,0 +1,16 @@
+<% provide(:title, "Layer 2 Sweeper Service") %>
+<% provide(:description, 'New Sweeper') %>
+<div class='row'>
+  <div class='col-md-4 col-md-offset-2'>
+    <%= form_for(@sweeper) do |f| %>
+      <%= render 'error_messages' %>
+      <%= f.label :mac %>
+      <%= f.text_field :mac, class: 'form-control' %>
+      <%= f.label :ip %>
+      <%= f.text_field :ip, class: 'form-control' %>
+      <%= f.label :description %>
+      <%= f.text_field :description, class: 'form-control' %>
+      <%= f.submit "Save", class: "btn btn-primary pull-right" %>
+    <% end %>
+  </div>
+</div>

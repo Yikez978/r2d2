@@ -6,7 +6,6 @@ RSpec.describe Sweeper, type: :model do
       @sweeper = Sweeper.new()
       expect(@sweeper).to be_invalid 
     end
-  
     it "if mac is not set" do
       @sweeper = Sweeper.new(ip: '192.168.1.1', description: '192.168.1.0/24')
       expect(@sweeper).to be_invalid
@@ -23,6 +22,16 @@ RSpec.describe Sweeper, type: :model do
       @sweeper = Sweeper.new(mac: '00:1f:f3:cd:62:g2')
       expect(@sweeper).to be_invalid
     end
+    it 'if mac is duplicate' do
+      sweeper = Sweeper.create(mac: '00:1f:f3:cd:62:d2')
+      sweeper_duplicate = Sweeper.new(mac: sweeper.mac)
+      expect(sweeper_duplicate).to be_invalid
+    end
+    it 'if mac is duplicate - case insensitive' do
+      sweeper = Sweeper.create(mac: '00:1f:f3:cd:62:d2')
+      sweeper_duplicate = Sweeper.new(mac: sweeper.mac.upcase)
+      expect(sweeper_duplicate).to be_invalid
+    end
     it 'if IP is invalid' do
       @sweeper = Sweeper.new(mac: '00:1f:f3:cd:62:d2', ip: '192.168.1')
       expect(@sweeper).to be_invalid
@@ -35,6 +44,10 @@ RSpec.describe Sweeper, type: :model do
   describe 'and' do
     it "IP is valid" do
       @sweeper = Sweeper.new(mac: '00:1f:f3:cd:62:d2', ip: '1.1.1.1')
+      expect(@sweeper).to be_valid
+    end
+    it 'IP is empty' do
+      @sweeper = Sweeper.new(mac: '00:1f:f3:cd:62:d2', ip: '')
       expect(@sweeper).to be_valid
     end
     it "description has a value" do

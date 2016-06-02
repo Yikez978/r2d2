@@ -1,7 +1,18 @@
 <% provide(:title, "Layer 2 Sweeper Service") %>
 <% provide(:description, "Top Level") %>
-<table class="table table-striped">
-  <thead><tr><th>Sweeper Description</th><th>IP</th><th>MAC</th></tr></thead>
-  <%= render @sweepers %>
-</table>
-<%= will_paginate %>
+<div class='row'>
+  <div class='col-md-4 col-md-offset-1'>
+    <% flash.each do |message_type, message| %>
+        <div class="alert alert-<%= message_type %>"><%= message %></div>
+    <% end %>
+    <%= link_to new_sweeper_path, { class: "btn btn_link btn-xs" } do %>
+      <span class='glyphicon glyphicon-plus'></span>
+      Add new Sweeper
+    <% end %>
+    <table class="table table-striped">
+      <thead><tr><th>Sweeper Description</th><th>IP</th><th>MAC</th></tr></thead>
+      <%= render @sweepers %>
+    </table>
+    <%= will_paginate %>
+  </div>
+</div>
