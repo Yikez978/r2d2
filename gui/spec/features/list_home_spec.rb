@@ -2,7 +2,22 @@ require 'rails_helper'
 
 RSpec.describe 'list', type: :feature do
   describe 'GET /lists'do
-    before(:each) { visit '/lists' }
+    before(:each) do
+      Glyph.create([
+           { name: 'glyphicon-unchecked' },
+           { name: 'glyphicon-thumbs-up' },
+           { name: 'glyphicon-thumbs-down' },
+           { name: 'glyphicon-warning-sign' },
+           { name: 'glyphicon-eye-open' },
+           { name: 'glyphicon-star' }
+          ])
+      List.create([
+           { name: 'Unassigned', glyph_id: Glyph.find_by_name('glyphicon-unchecked').id },
+           { name: 'Whitelist', glyph_id: Glyph.find_by_name('glyphicon-thumbs-up').id },
+           { name: 'Blacklist', glyph_id: Glyph.find_by_name('glyphicon-thumbs-down').id }
+        ])
+      visit '/lists'
+    end
     it 'has the program name as the title' do
       expect(page).to have_title('Remote Rogue Device Detector')
     end
@@ -29,16 +44,15 @@ RSpec.describe 'list', type: :feature do
         it 'has a Count column' do
           expect(page.all('th')[2]).to have_content('Count')
         end
-        it 'has a Action column' do
+        it 'has an Action column' do
           expect(page.all('th')[3]).to have_content('Action')
         end
       end
       describe 'data row' do
-        before(:all) do
-          Device.all.destroy_all
+        before(:each) do
           FactoryGirl.create(:device, list: List.first)
+          visit '/lists'
         end
-        after(:all) { Device.all.destroy_all }
         it 'displays the list glyph' do
           within(page.all('td')[0]) do
             element = all('span')[0]
@@ -80,6 +94,12 @@ RSpec.describe 'list', type: :feature do
           end
         end
         describe 'clicking the delete icon' do
+          before(:all) do
+            Capybara.current_driver = :selenium
+          end
+          after(:all) do
+            Capybara.use_default_driver
+          end
           before(:each) do
             @delete_list = FactoryGirl.create(:list)
             visit lists_path
@@ -89,12 +109,12 @@ RSpec.describe 'list', type: :feature do
           end
           describe 'on the protected lists' do
             ['Unassigned', 'Whitelist', 'Blacklist'].each do |l|
-              it 'pops alert that the list cannot be deleted'
+              it 'pops alert that the list cannot be deleted' 
             end
           end
           it 'reassigns members to unassigned' do
             @unassigned_count_b4 = Device.where(list: List.find_by_name('Unassigned')).count
-            FactoryGirl.create(:device, list: @delete_list)
+            FactoryGirl.create(:device) # list = unassigned
             accept_confirm do
               within(page.all('td')[15]) do
                 all('.btn')[1].click
