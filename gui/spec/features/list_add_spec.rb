@@ -65,6 +65,6 @@ RSpec.describe 'list', type: :feature do
       fill_in 'Name', with: "Team America"
       click_button 'Save'
       expect(current_path).to eq(lists_path)
-      end
+    end
   end
 end

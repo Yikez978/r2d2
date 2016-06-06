@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe 'list', type: :feature do
-  describe 'GET /lists'do
+  describe 'GET /lists' do
     before(:each) do
       Glyph.create([
            { name: 'glyphicon-unchecked' },
@@ -16,7 +16,7 @@ RSpec.describe 'list', type: :feature do
            { name: 'Whitelist', glyph_id: Glyph.find_by_name('glyphicon-thumbs-up').id },
            { name: 'Blacklist', glyph_id: Glyph.find_by_name('glyphicon-thumbs-down').id }
         ])
-      visit '/lists'
+      visit lists_path
     end
     it 'has the program name as the title' do
       expect(page).to have_title('Remote Rogue Device Detector')
@@ -51,7 +51,7 @@ RSpec.describe 'list', type: :feature do
       describe 'data row' do
         before(:each) do
           FactoryGirl.create(:device, list: List.first)
-          visit '/lists'
+          visit lists_path
         end
         it 'displays the list glyph' do
           within(page.all('td')[0]) do
@@ -93,9 +93,17 @@ RSpec.describe 'list', type: :feature do
             expect(element['class']).to match('glyphicon-remove')
           end
         end
-        describe 'clicking the delete icon' do
+        describe 'on the protected lists' do
+          ['Unassigned', 'Whitelist', 'Blacklist'].each do |l|
+            it 'is disabled' #do
+              # find the relevent button
+              # expect(element['class']).to match('disabled')
+            #end
+          end
+        end
+        describe 'clicking the delete icon on the unprotected lists', :js => true do
           before(:all) do
-            Capybara.current_driver = :selenium
+            Capybara.current_driver = :webkit
           end
           after(:all) do
             Capybara.use_default_driver
@@ -103,47 +111,33 @@ RSpec.describe 'list', type: :feature do
           before(:each) do
             @delete_list = FactoryGirl.create(:list)
             visit lists_path
-            within(page.all('td')[15]) do
-              all('.btn')[1].click
-            end
+            find("[data-id=\"#{@delete_list.id}\"]").click
           end
-          describe 'on the protected lists' do
-            ['Unassigned', 'Whitelist', 'Blacklist'].each do |l|
-              it 'pops alert that the list cannot be deleted' 
-            end
+          it 'displays the delete modal with Delete <listname>?' do
+            expect(page).to have_content("Delete List '#{@delete_list.name}'?")
           end
-          it 'reassigns members to unassigned' do
-            @unassigned_count_b4 = Device.where(list: List.find_by_name('Unassigned')).count
-            FactoryGirl.create(:device) # list = unassigned
-            accept_confirm do
-              within(page.all('td')[15]) do
-                all('.btn')[1].click
-              end
-            end
-            expect(Device.where(list: List.find_by_name('Unassigned')).count).to eq(@unassigned_count_b4+1)
+          it 'displays "Any devices in the list will be moved to Unassigned."' do
+            expect(page).to have_content("Any devices in the list will be moved to Unassigned.")
           end
           it 'deletes the list after confirmation' do
-            accept_confirm do
-              within(page.all('td')[15]) do
-                all('.btn')[1].click
-              end
-            end
+            click_link('Delete')
+            visit lists_path # reload page because flash message has list name
             expect(page).not_to have_content(@delete_list.name)
           end
+          it 'reassigns devices to unassigned' do
+            @unassigned_count_b4 = Device.where(list: List.find_by_name('Unassigned')).count
+            FactoryGirl.create(:device, list: @delete_list)
+            click_link('Delete')
+            visit lists_path
+            expect(Device.where(list: List.find_by_name('Unassigned')).count).to eq(@unassigned_count_b4+1)
+          end
           it 'displays success message' do
-            accept_confirm do
-              within(page.all('td')[15]) do
-                all('.btn')[1].click
-              end
-            end
-            expect(page).to have_content("Deleted list named '#{@delete_list_name}'.")
+            click_link('Delete')
+            expect(page).to have_content("Deleted list named '#{@delete_list.name}'.")
           end
           it 'does not delete the list if cancelled' do
-            dismiss_confirm do
-              within(page.all('td')[15]) do
-                all('.btn')[1].click
-              end
-            end
+            click_button('Cancel')
+            visit lists_path
             expect(page).to have_content(@delete_list.name)
           end
         end
@@ -152,10 +146,7 @@ RSpec.describe 'list', type: :feature do
     describe 'has pagination controls when table has more than 10 rows' do
       before(:each) do
         FactoryGirl.create_list(:list, 11)
-        visit '/lists'
-      end
-      after(:each) do
-        List.all.delete_all
+        visit lists_path
       end
       it do
         expect(page).to have_selector('div.pagination')
