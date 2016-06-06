@@ -2,4 +2,14 @@
   <td><%=link_to sweeper.description, "/sweepers/#{sweeper.id}"%></td>
   <td><%=sweeper.ip%></td>
   <td><%=sweeper.mac%></td>
+  <td>
+    <%= link_to edit_sweeper_path(sweeper), { class: "btn btn_link btn-xs" } do %>
+      <span class='glyphicon glyphicon-pencil'></span>
+    <% end %>
+    <button type='button' class="btn btn-link"
+            data-toggle="modal" data-target="#sweeper_delete"
+            data-sweeper_description="<%= sweeper.description %>" data-id="<%= sweeper.id%>">
+      <span class='glyphicon glyphicon-remove'></span>
+    </button>     
+  </td>
 </tr>

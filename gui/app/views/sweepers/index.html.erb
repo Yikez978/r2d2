@@ -1,7 +1,8 @@
 <% provide(:title, "Layer 2 Sweeper Service") %>
 <% provide(:description, "Top Level") %>
+<%= render 'layouts/delete_sweeper_modal' %>
 <div class='row'>
-  <div class='col-md-4 col-md-offset-1'>
+  <div class='col-md-6 col-md-offset-1'>
     <% flash.each do |message_type, message| %>
         <div class="alert alert-<%= message_type %>"><%= message %></div>
     <% end %>
@@ -10,9 +11,20 @@
       Add new Sweeper
     <% end %>
     <table class="table table-striped">
-      <thead><tr><th>Sweeper Description</th><th>IP</th><th>MAC</th></tr></thead>
+      <thead><tr><th>Sweeper Description</th><th>IP</th><th>MAC</th><th>Action</th></tr></thead>
       <%= render @sweepers %>
     </table>
     <%= will_paginate %>
   </div>
 </div>
+<script>
+  $('#sweeper_delete').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget) // Button that triggered the modal
+    var sweeper = button.data('sweeper_description')
+    var sweeper_id = button.data('id')
+    var modal = $(this)
+    modal.find('.modal-title').text("Delete Sweeper '" + sweeper + "'?")
+    var $submit = $(this).find('.btn-danger'), href = $submit.attr('href');
+    $submit.attr('href', href.replace('sweeperid', sweeper_id));
+  });
+</script>

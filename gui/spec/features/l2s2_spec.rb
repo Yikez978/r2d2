@@ -39,13 +39,16 @@ RSpec.describe "l2s2", type: :feature do
           it 'has a MAC address column' do
             expect(page.all('th')[2]).to have_content('MAC')
           end
+          it 'has an Action column' do
+            expect(page.all('th')[3]).to have_content('Action')
+          end
         end
         describe 'data row' do
           let!(:sweeper) { FactoryGirl.create(:sweeper) }
           before(:each) do
             visit "/sweepers"
           end
-          it 'had a link to display the sweeper details' do
+          it 'has a link to display the sweeper details' do
             expect(page.find_link(sweeper.description, "/sweepers/#{sweeper.id}"))
           end
           it 'displays the sweeper description' do
@@ -57,8 +60,68 @@ RSpec.describe "l2s2", type: :feature do
           it 'displays the sweeper MAC address' do
             expect(page.all('td')[2]).to have_content(sweeper.mac)
           end
-          it 'has an Action column' do
-            expect(page.all('th')[3]).to have_content('Action')
+          describe 'the action field' do
+            it 'displays the edit icon' do
+              within(page.all('td')[3]) do
+                element = all('span')[0]
+                expect(element['class']).to match('glyphicon-pencil')
+              end
+            end
+            it 'clicking the edit icon takes you to the edit page' do
+              within(page.all('td')[3]) do
+                all('.btn')[0].click
+              end
+              expect(current_path).to eq(edit_sweeper_path(sweeper.id))
+            end
+            it 'displays the delete icon' do
+              within(page.all('td')[3]) do
+                element = all('span')[1]
+                expect(element['class']).to match('glyphicon-remove')
+              end
+            end
+            describe 'clicking the delete icon', :js => true do
+              before(:all) do
+                Capybara.current_driver = :webkit
+              end
+              after(:all) do
+                Capybara.use_default_driver
+              end
+              before(:each) do
+                @delete_sweeper = FactoryGirl.create(:sweeper)
+                visit sweepers_path
+                find("[data-id=\"#{@delete_sweeper.id}\"]").click
+              end
+              it 'displays the delete modal with "Delete Sweeper <sweeper>?"' do
+                expect(page).to have_content("Delete Sweeper '#{@delete_sweeper.description}'?")
+              end
+              it 'displays a warning' do
+                expect(page).to have_content("This cannot be undone and will also delete the related sweeps.")
+              end
+              it 'deletes the list after confirmation' do
+                click_link('Delete')
+                expect(page).not_to have_content(@delete_sweeper.mac)
+              end
+              describe 'deletes the related sweeps' do
+                before(:each) do
+                  @sweep = FactoryGirl.create(:sweep)
+                  @sweep.nodes << Node.create(ip: @delete_sweeper.ip, mac: @delete_sweeper.mac)
+                end
+                it '(need to use the results link table somehow)' do
+                  @count_b4 = Sweep.includes(:nodes).where(nodes:{mac:@delete_sweeper.mac}).count
+                  click_link('Delete')
+                  expect(Sweep.includes(:nodes).where(nodes:{mac:@delete_sweeper.mac}).count).to eq(@count_b4-1)
+                end
+              end
+              it 'displays success message' do
+                click_link('Delete')
+                expect(page).to have_content("Deleted sweeper with description '#{@delete_sweeper.description}'.")
+              end
+              it 'does not delete the sweeper if cancelled' do
+                click_button('Cancel')
+                visit sweepers_path
+                expect(page).to have_content(@delete_sweeper.mac)
+              end
+            end
           end
         end
         describe 'should be sortable' do

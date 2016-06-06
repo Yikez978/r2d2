@@ -4,6 +4,7 @@ class SweepersController < ApplicationController
   end
 
   def edit
+    @sweeper = Sweeper.find(params[:id])
   end
 
   def show
@@ -13,6 +14,13 @@ class SweepersController < ApplicationController
   end
 
   def update
+    @sweeper = Sweeper.find(params[:id])
+    if @sweeper.update_attributes(sweeper_params)
+      flash[:success] = "Sweeper updated."
+      redirect_to sweepers_path
+    else
+      render 'edit'
+    end
   end
 
   def new
@@ -20,7 +28,7 @@ class SweepersController < ApplicationController
   end
 
   def create
-    @sweeper = Sweeper.new(list_params)
+    @sweeper = Sweeper.new(sweeper_params)
     if @sweeper.save
       flash[:success] = "Added new sweeper #{@sweeper.mac}"
       redirect_to sweepers_path
@@ -32,9 +40,14 @@ class SweepersController < ApplicationController
   end
 
   def destroy
+    @sweeper = Sweeper.find(params[:id])
+    #Device.where(sweeper: @sweeper.id).update_all(list_id: List.find_by_name('Unassigned'))
+    @sweeper.destroy
+    flash[:success] = "Deleted sweeper with description '#{@sweeper.description}'."
+    redirect_to sweepers_path
   end
   private
-    def list_params
+    def sweeper_params
       params.require(:sweeper).permit(:mac, :ip, :description)
     end
 end
