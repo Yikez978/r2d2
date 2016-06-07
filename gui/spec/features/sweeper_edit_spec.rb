@@ -56,5 +56,23 @@ RSpec.describe 'sweeper', type: :feature do
     click_button 'Save'
     expect(page).to have_content("Sweeper updated.")
   end
+  describe 'clicking cancel' do
+    it 'does not change the sweeper' do
+      fill_in 'Description', with: 'fred'
+      fill_in 'Mac', with: '11:11:11:11:11:11'
+      fill_in 'Ip', with: '255.255.255.1'
+      click_link 'Cancel'
+      expect(page.all('td')[0]).to have_content(@sweeper.description)
+      expect(page).not_to have_content('fred')
+      expect(page.all('td')[1]).to have_content(@sweeper.ip)
+      expect(page).not_to have_content('255.255.255.1')
+      expect(page.all('td')[2]).to have_content(@sweeper.mac)
+      expect(page).not_to have_content('11:11:11:11:11:11')
+    end
+    it 'redirects to the sweepers page' do
+      click_link 'Cancel'
+      expect(current_path).to eq(sweepers_path)
+    end
+  end
 end
   

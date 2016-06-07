@@ -59,6 +59,14 @@ RSpec.describe 'sweeper', type: :feature do
           expect(current_path).to eq(sweepers_path)
         end
       end
+      describe 'clicking cancel' do
+        it 'does not create a new sweeper' do
+          sweeper_count_b4 = Sweeper.count
+          fill_in 'Description', with: 'freed'
+          click_link 'Cancel'
+          expect(Sweeper.count).to eq(sweeper_count_b4)
+        end
+      end
     end
   end
 end

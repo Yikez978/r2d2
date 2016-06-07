@@ -2,14 +2,18 @@ require 'rails_helper'
 
 RSpec.describe 'list', type: :feature do
   describe 'edit page' do
-    before(:all) { List.all.delete_all }
     before(:each) do
       @list = FactoryGirl.create(:list)
       visit edit_list_path(@list)
     end
-    after(:each) { List.find(@list.id).delete }
     it 'has the edit url' do
       expect(current_path).to eq(edit_list_path(@list))
+    end
+    it 'displays the current name' do
+      expect(find_field('list_name').value).to eq(@list.name)
+    end
+    it 'displays the current glyph' do
+      expect(find_field('list_glyph_id').value).to eq(@list.id.to_s)
     end
     describe 'filling in field for name and clicking save' do
       it 'changes the name' do
@@ -45,10 +49,22 @@ RSpec.describe 'list', type: :feature do
         end
         it 'case-insensitive duplicate name'
       end
-      it 'has the same Count as before'
       it 'assigns the selected glyph'
       it 'redirects to the lists page' do
         click_button 'Save'
+        expect(current_path).to eq(lists_path)
+      end
+    end
+    describe 'clicking cancel' do
+      it 'does not change the name' do
+        fill_in 'Name', with: 'fred'
+        click_link 'Cancel'
+        expect(page.all('td')[1]).to have_content(@list.name)
+        expect(page).not_to have_content('fred')
+      end
+      it 'does not change the glyph'
+      it 'redirects to the lists page' do
+        click_link 'Cancel'
         expect(current_path).to eq(lists_path)
       end
     end

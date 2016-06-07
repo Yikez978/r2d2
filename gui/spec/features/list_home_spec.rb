@@ -113,7 +113,7 @@ RSpec.describe 'list', type: :feature do
             visit lists_path
             find("[data-id=\"#{@delete_list.id}\"]").click
           end
-          it 'displays the delete modal with Delete <listname>?' do
+          it 'displays the delete modal with "Delete List <listname>?"' do
             expect(page).to have_content("Delete List '#{@delete_list.name}'?")
           end
           it 'displays "Any devices in the list will be moved to Unassigned."' do

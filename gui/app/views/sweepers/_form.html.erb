@@ -1,0 +1,25 @@
+<div class='col-md-4 col-md-offset-1'>
+  <%= form_for(@sweeper, :html => { :class => "form-horizontal" }) do |f| %>
+    <%= render 'error_messages' %>
+  <div class="form-group">
+    <%= f.label :mac, class: 'col-sm-3' %>
+    <div class='col-sm-9'>
+      <%= f.text_field :mac, class: 'form-control' %>
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :ip, class: 'col-sm-3' %>
+    <div class='col-sm-9'>
+      <%= f.text_field :ip, class: 'form-control' %>
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :description, class: 'col-sm-3' %>
+    <div class='col-sm-9'>
+      <%= f.text_field :description, class: 'form-control' %>
+    </div>
+  </div>
+    <%= f.submit "Save", class: "btn btn-primary pull-right" %>
+    <%= link_to 'Cancel', sweepers_path, class: 'btn btn-default pull-right'%>
+  <% end %>
+</div>
