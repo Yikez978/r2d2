@@ -6,6 +6,7 @@ class Scope < ActiveRecord::Base
   validates :mask, presence: true,
                    :format => { :with => Resolv::IPv4::Regex }
   has_many :leases
+  has_many :devices, through: :leases
   belongs_to :server
   accepts_nested_attributes_for :leases
   self.per_page = 10

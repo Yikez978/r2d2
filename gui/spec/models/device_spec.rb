@@ -16,11 +16,6 @@ RSpec.describe Device, type: :model do
       expect(device).to be_invalid
     end
   
-    it "list is not set" do
-      device = Device.new(mac: '00:1f:f3:cd:62:f2', list: nil)
-      expect(device).to be_invalid
-    end
-  
     it "MAC is not long enough" do
       device = Device.new(mac: '00:1f:f3:cd:62:d', list: @list)
       expect(device).to be_invalid
@@ -52,5 +47,11 @@ RSpec.describe Device, type: :model do
     note = 'This is a note'
     device = Device.create(mac: '00:1f:f3:cd:62:f2', list: @list, notes: note)
     expect(device.notes).to eq(note)
+  end
+
+  it "sets the list to 'Unassigned' if not set" do
+    device = Device.create(mac: '00:1f:f3:cd:62:f2', list: nil)
+    list = Device.find(device.id).list
+    expect(list.name).to eq 'Unassigned'
   end
 end

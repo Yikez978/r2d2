@@ -6,5 +6,6 @@ class Lease < ActiveRecord::Base
   validates :expiration, presence: true
   belongs_to :scope
   belongs_to :device
+  accepts_nested_attributes_for :device
   self.per_page = 10
 end

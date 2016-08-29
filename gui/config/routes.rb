@@ -10,11 +10,14 @@ Rails.application.routes.draw do
   get "l2s2" => 'sweepers#index'
   constraints subdomain: 'api' do
     namespace :api do #, path: '/'  do
-      resources :devices, only: [:index, :create, :show]
+      resources :servers, only: [:index, :update, :show] do
+        resources :scopes, only: [:index]
+      end
+      resources :scopes, only: [:update, :show]
+      #resources :nodes, only: [:index, :create, :show]
       resources :sweeps, only: [:create]
     end
   end
-  #get "/devices" => 'devices'
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 

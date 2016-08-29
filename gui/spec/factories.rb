@@ -47,6 +47,7 @@ FactoryGirl.define do
     expiration Faker::Time.between(2.days.ago, Faker::Time.forward(23, :morning))
     kind ['D','B','U','R','N'].sample
     device
+    scope
   end
 
   factory :sweeper do
@@ -66,14 +67,20 @@ FactoryGirl.define do
       lease_count 1
     end
     after(:create) do |scope, evaluator|
-      evaluator.lease_count.times  { scope.leases << create(:lease, ip: ip_array.sample) }
-      sweeper.create(ip: ip_array.sample, description: evaluator.description)
+      if evaluator.lease_count > 0
+        evaluator.lease_count.times  { scope.leases << create(:lease, ip: ip_array.sample) }
+        #sweeper.create(ip: ip_array.sample, description: evaluator.description)
+      end
     end
   end
 
   factory :server do
-    ip   Faker::Internet.ip_v4_address
-    name Faker::Internet.domain_word + ".example.com"
+    sequence :name do |n|
+      "server#{n}@example.com"
+    end
+    sequence :ip do |i|
+      "192.168.1.#{i}"
+    end
     transient do
       scope_count 1
     end
@@ -81,7 +88,7 @@ FactoryGirl.define do
       evaluator.scope_count.times do
         mask = (23..29).to_a.sample.to_s
         cidr4 = NetAddr::CIDR.create(Faker::Internet.ip_v4_address+'/'+mask)
-        server.scopes << create(:scope, ip: cidr4.to_s, mask: cidr4.wildcard_mask)
+        server.scopes << create(:scope, ip: cidr4.network.to_s, mask: cidr4.wildcard_mask)
       end
     end
   end
