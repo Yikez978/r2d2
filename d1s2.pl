@@ -12,6 +12,7 @@ my $user = "mcculloughs/eric mccullough%p1izzaR2d2!"; # use kerberos?
 my ($year, $mon, $mday, $hour, $min);
 
 my @dhcpservers = get_dhcp_servers(); # ('192.168.100.66',); # get from server?
+#print "server = $dhcpservers[0]{'ip'}\n";
 
 my %host_list;
 my %ip_list;
@@ -19,7 +20,7 @@ my %mac_list;
 my %reserved_ips;
 
 my $showhelp;
-my $result = GetOptions (
+my $result = GetOptions(
   "help|?" => \$showhelp,
   );
 
@@ -32,7 +33,9 @@ if ($showhelp) {
 my $totalcount = my $foundcount = 0; # for counts of total hosts in dhcp, count of found possible rogue hosts.
 my $total_scopes = 0;
 
-foreach my $server (@dhcpservers) {
+foreach my $server_hash (@dhcpservers) {
+  my $server = $$server_hash{'ip'};
+  my @saved_scopes = get_scopes($$server_hash{'id'}); # from the API
   my %scopes;
   $scopes{'server'}{'scopes_attributes'} = [];
   # get dhcp scopes with description and comments.  Also get reserved IPs and default gateways for each scope.
@@ -177,12 +180,32 @@ sub get_dhcp_servers {
   my $resp = $ua->request($req);
   if ($resp->is_success) {
       my $message = $resp->decoded_content;
-      print "Received reply: $message\n";
+      print "get_dhcp_servers received reply: $message\n";
   } else {
       print "HTTP GET error code: ", $resp->code, "\n";
       print "HTTP GET error message: ", $resp->message, "\n";
   }
-  return json_decocde $resp->message;
+  my @array = decode_json($resp->decoded_content);
+  return $array[0][0];
+}
+
+sub get_scopes {
+  my $server_id = shift;
+  my $ua = LWP::UserAgent->new;
+  my $server_endpoint = "http://api.r2d2.com:3000/api/servers/$server_id";
+  my $req = HTTP::Request->new(GET => $server_endpoint);
+  $req->header('content-type' => 'application/json');
+  $req->header('Accept' => 'application/json');
+  my $resp = $ua->request($req);
+  if ($resp->is_success) {
+      my $message = $resp->decoded_content;
+      print "get scopes received reply: $message\n";
+  } else {
+      print "HTTP GET error code: ", $resp->code, "\n";
+      print "HTTP GET error message: ", $resp->message, "\n";
+  }
+  my @array = decode_json($resp->decoded_content);
+  return $array[0][0];
 }
 
 sub update_db {

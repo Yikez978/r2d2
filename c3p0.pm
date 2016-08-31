@@ -27,27 +27,28 @@ sub getADnames {
   my $dcs = shift;
   $hashref = shift;
   foreach $dc (keys(%$dcs)) {
-    open (DSQUERY, "dsquery.exe * ".$$dcs->$dc." -s $dc -filter \"(&(samaccounttype=805306369))\" -limit 0|")
+    my $DSQUERY;
+    open ($DSQUERY, "dsquery.exe * ".$$dcs->$dc." -s $dc -filter \"(&(samaccounttype=805306369))\" -limit 0|")
       or warn "Unable to get computer names from $dc\n";
-    if (DSQUERY) {
+    if ($DSQUERY) {
       print STDERR "Loading Computer names from $dc\nNames not loaded will be displayed\n";
       $count = 0;
-      while (<DSQUERY>) {
+      while (<$DSQUERY>) {
         if (/\"CN=([\w\-]+),/) {
           $$hashref{uc($1)} = 1;
           $count += 1;
         } else { print STDERR $_; }
       }
-      close DSQUERY;
+      close $DSQUERY;
       &printandpush("Number of computer names loaded from $dc is $count\n");
     }
     # get printer names from AD
-    open (DSQUERY, "dsquery.exe * ".$$dcs->$dc." -s $dc -filter \"(&(objectClass=PrintQueue))\" -limit 0 -attr PrinterName|")
+    open ($DSQUERY, "dsquery.exe * ".$$dcs->$dc." -s $dc -filter \"(&(objectClass=PrintQueue))\" -limit 0 -attr PrinterName|")
       || warn "Unable to get printer names from $dc\n";
-    if (DSQUERY) {
+    if ($DSQUERY) {
       print STDERR "Loading Printer names from $dc\nNames not loaded will be displayed\n";
       $count = 0;
-      while (<DSQUERY>) {
+      while (<$DSQUERY>) {
         while (s/\s$//g) {}
         if (/\s+([\w\-\ ]+)/) {
           $$hashref{uc($1)} += 1;
@@ -55,7 +56,7 @@ sub getADnames {
           $count += 1; # change this to only count unique printer names?
         } else { print STDERR $_; }
       }
-      close DSQUERY;
+      close $DSQUERY;
       &printandpush("Number of printer names loaded from $dc is $count\n");
     }
   }
