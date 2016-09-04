@@ -8,6 +8,9 @@
 #   track ack response?
 #   syslog output
 
+#  http://search.cpan.org/~gomor/Net-Libdnet-0.98/lib/Net/Libdnet.pm
+#  https://metacpan.org/source/GOMOR/Net-Libdnet-0.98/lib/Net/Libdnet/Arp.pm
+
 use strict;
 use Net::CIDR::Set;
 use Net::Ping;

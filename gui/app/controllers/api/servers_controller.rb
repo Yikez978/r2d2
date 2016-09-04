@@ -12,7 +12,7 @@ module API
     def update
       server = Server.find(params[:id])
       if server.update(server_params)
-        render json: server, status: 200
+        render nothing: true, status: :no_content
       else
         render json: server.errors, status: 422 # :unprocessable_entity
       end

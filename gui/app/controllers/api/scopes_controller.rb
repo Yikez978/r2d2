@@ -21,7 +21,7 @@ module API
     def update
       scope = Scope.find(params[:id])
       if scope.update(scope_params)
-        render json: scope, status: 200
+        render nothing: true, status: 204
       else
         render json: scope.errors, status: 422 # :unprocessable_entity
       end

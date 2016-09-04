@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "API" do
+RSpec.describe "API Scopes " do
   describe 'get /api/scopes/:id' do
     let!(:list) { FactoryGirl.create(:list, name:'Unassigned') }
     let!(:scope) { FactoryGirl.create(:scope, lease_count: 0) }
@@ -42,7 +42,7 @@ RSpec.describe "API" do
     let!(:scope) { FactoryGirl.create(:scope, lease_count: 0) }
     let!(:device) { FactoryGirl.create(:device) }
     describe 'when successful' do
-      it 'should return status 200' do
+      it 'should return status 204' do
         put "http://api.example.com/api/scopes/#{scope.id}",
           { scope:
             { leases_attributes:
@@ -52,9 +52,22 @@ RSpec.describe "API" do
             }
           }.to_json,
           { 'Accept' => Mime::JSON, 'Content-Type' => Mime::JSON.to_s }
-        expect(response).to be_success
+        expect(response.status).to eq(204)
       end
-    
+
+      it 'returns an empty body' do
+        put "http://api.example.com/api/scopes/#{scope.id}",
+          { scope:
+            { leases_attributes:
+              [{ ip: '1.1.1.1', mask: '255.255.255.0', expiration: '1', kind: '', name: 'fred',
+                device_id: device.id 
+              }]
+            }
+          }.to_json,
+          { 'Accept' => Mime::JSON, 'Content-Type' => Mime::JSON.to_s }
+        expect(response.body.length).to eq(0)
+      end
+
       describe 'given an id' do
         let!(:lease) { FactoryGirl.create(:lease, scope: scope) }
         it 'updates a lease' do
@@ -150,6 +163,24 @@ RSpec.describe "API" do
 
           { 'Accept' => Mime::JSON, 'Content-Type' => Mime::JSON.to_s }
         expect(status).to eq(422)
+      end
+    end
+  end
+  
+  describe 'get /api/scopes/:id/leases' do
+    let!(:list) { FactoryGirl.create(:list, name:'Unassigned') }
+    let!(:scope) { FactoryGirl.create(:scope, lease_count: 3) }
+    before(:each) do
+      get "http://api.example.com/api/scopes/#{scope.id}/leases"
+    end  
+    describe 'when successful' do
+      it 'returns status 200' do
+        expect(response).to be_success
+      end
+
+      it 'returns three leases' do
+        json = JSON.parse(response.body)
+        expect(json.count).to eq(3)
       end
     end
   end

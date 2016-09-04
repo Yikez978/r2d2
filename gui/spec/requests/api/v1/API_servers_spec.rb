@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "API" do
+RSpec.describe "API Servers" do
   describe 'get /api/servers' do
     before(:each) do
       @servers =  FactoryGirl.create_list(:server, 3, scope_count: 0)
@@ -83,11 +83,15 @@ RSpec.describe "API" do
           { 'Accept' => Mime::JSON, 'Content-Type' => Mime::JSON.to_s }
       end
 
-      it 'returns status 200' do
-        expect(response).to be_success
+      it 'returns status 204' do # :no_content
+        expect(response.status).to eq(204)
       end
 
-      it 'updates a scope when it already exists' do
+      it 'returns an empty body' do
+        expect(response.body.length).to eq(0)
+      end
+
+      it 'updates a scope when it already exists (has an id)' do
         scope = Scope.first
         scope_count_before = Scope.count
         put "http://api.example.com/api/servers/#{server.id}",
@@ -118,7 +122,7 @@ RSpec.describe "API" do
           { 'Accept' => Mime::JSON, 'Content-Type' => Mime::JSON.to_s }
         expect(Scope.count).to eq(scope_count_before + 1)
       end
-      
+
       it 'creates multiple scopes' do
         scope_count_before = Scope.count
         put "http://api.example.com/api/servers/#{server.id}",

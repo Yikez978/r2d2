@@ -13,7 +13,10 @@ Rails.application.routes.draw do
       resources :servers, only: [:index, :update, :show] do
         resources :scopes, only: [:index]
       end
-      resources :scopes, only: [:update, :show]
+      resources :scopes, only: [:update, :show] do
+        resources :leases, only: [:index]
+      end
+      resources :devices, only: [:show]
       #resources :nodes, only: [:index, :create, :show]
       resources :sweeps, only: [:create]
     end
