@@ -70,13 +70,14 @@ RSpec.describe "API Scopes " do
 
       describe 'given an id' do
         let!(:lease) { FactoryGirl.create(:lease, scope: scope) }
+        let!(:device2) { FactoryGirl.create(:device) }
         it 'updates a lease' do
           lease_count_before = Lease.count
           lease_id = lease.id
           put "http://api.example.com/api/scopes/#{scope.id}",
             { scope:
               { leases_attributes:
-                [{ id: lease_id, ip: '2.1.1.0', expiration: '2', kind: 'D', name: 'fred', mask: '255.255.255.2', device_id: device.id }]
+                [{ id: lease_id, ip: '2.1.1.0', expiration: '2', kind: 'D', name: 'fred', mask: '255.255.255.2', device_id: device2.id }]
               }
             }.to_json,
             { 'Accept' => Mime::JSON, 'Content-Type' => Mime::JSON.to_s }
@@ -87,6 +88,7 @@ RSpec.describe "API Scopes " do
           expect(lease.kind).to eq('D')
           expect(lease.name).to eq('fred')
           expect(lease.mask).to eq('255.255.255.2')
+          expect(lease.device_id).to eq(device2.id)
         end
       end
     

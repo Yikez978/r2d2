@@ -54,16 +54,27 @@ foreach my $server_hash (@dhcpservers) {
         foreach my $ss_array ($saved_scopes[0]) {
           foreach my $ss_hash (@$ss_array) {
             if ($$ss_hash{'ip'} eq $ip) { # scope exists in DB
-              print STDERR "update scope $ip if changed\n";
               $found = 'Y';
-              # see if it needs to be updated
+              my $update;
+              if ($mask ne $$ss_hash{'mask'}) { $update = 'Y';
+              } elsif ($desc ne $$ss_hash{'description'}) { $update = 'Y';
+              } elsif ($comment ne $$ss_hash{'comment'}) { $update = 'Y';
+              } elsif ($lease_time ne $$ss_hash{'leasetime'}) { $update = 'Y';
+              } elsif ($scope_state ne $$ss_hash{'state'}) { $update = 'Y';
+              }
+              if ($update eq 'Y') {
+                print STDERR "Scope $ip changed, updating.\n";
+                $scope = { ip => $ip, mask => $mask, description => $desc, comment => $comment, leasetime => $lease_time, state => $scope_state };
+                push $scopes{'server'}{'scopes_attributes'}, $scope;
+                update_scope($$server_hash{'id'}, encode_json \%scopes);
+                $scopes{'server'}{'scopes_attributes'} = [];
+              }
               last;
             }
           }
         }
         if ($found ne 'Y') {
           print STDERR "create scope $ip\n";
-          # create new scope
           $scope = { ip => $ip, mask => $mask, description => $desc, comment => $comment, leasetime => $lease_time, state => $scope_state };
           push $scopes{'server'}{'scopes_attributes'}, $scope;
           update_scope($$server_hash{'id'}, encode_json \%scopes);
@@ -96,16 +107,27 @@ foreach my $server_hash (@dhcpservers) {
     foreach my $ss_array ($saved_scopes[0]) {
       foreach my $ss_hash (@$ss_array) {
         if ($$ss_hash{'ip'} eq $ip) { # scope exists in DB
-          print STDERR "update scope $ip if changed\n";
           $found = 'Y';
-          # see if it needs to be updated
+          my $update;
+          if ($mask ne $$ss_hash{'mask'}) { $update = 'Y';
+          } elsif ($desc ne $$ss_hash{'description'}) { $update = 'Y';
+          } elsif ($comment ne $$ss_hash{'comment'}) { $update = 'Y';
+          } elsif ($lease_time ne $$ss_hash{'leasetime'}) { $update = 'Y';
+          } elsif ($scope_state ne $$ss_hash{'state'}) { $update = 'Y';
+          }
+          if ($update eq 'Y') {
+            print STDERR "Scope $ip changed, updating.\n";
+            $scope = { ip => $ip, mask => $mask, description => $desc, comment => $comment, leasetime => $lease_time, state => $scope_state };
+            push $scopes{'server'}{'scopes_attributes'}, $scope;
+            update_scope($$server_hash{'id'}, encode_json \%scopes);
+            $scopes{'server'}{'scopes_attributes'} = [];
+          }
           last;
         }
       }
     }
     if ($found ne 'Y') {
       print STDERR "create scope $ip\n";
-      # create new scope
       $scope = { ip => $ip, mask => $mask, description => $desc, comment => $comment, leasetime => $lease_time, state => $scope_state };
       push $scopes{'server'}{'scopes_attributes'}, $scope;
       update_scope($$server_hash{'id'}, encode_json \%scopes);
@@ -129,7 +151,7 @@ foreach my $server_hash (@dhcpservers) {
       open (DHCPCMD, "/home/pi/winexe-1.00/source4/bin/winexe -U \"$user\" //$server 'netsh dhcp server \\\\$server scope $$scope{'ip'} show clients 1'|") or
         die "winexe //$server 'netsh dhcp server $server scope $$scope{'ip'} show clients 1' command failed";
       while (<DHCPCMD>) {
-        my $lease = my $device = my $name = my $expiration = my $ip = my $dhcpmac = my $kind = $mask = "";
+        my $lease = my $device = my $name = my $expiration = my $ip = my $dhcpmac = my $kind = my $mask = my $id = "";
         if (/The command needs a valid Scope IP Address/) {
           print STDERR "winexe -U $user //$server netsh failed to read scopes from $server, running under priviledged account?\n";
         } elsif (/^\d{1,3}/) {
@@ -159,30 +181,37 @@ foreach my $server_hash (@dhcpservers) {
             $ip_list{$ip} += 1;
             $mac_list{$dhcpmac} += 1;
             
-            if ($#saved_leases == 0) {
-              print STDERR "create lease $ip\n";
-                # create new lease
-                $lease = { ip => $ip, mask => $mask, name => $name, expiration => $expiration, kind => $kind, device_id => $$device{'id'} };
-                push $leases{'scope'}{'leases_attributes'}, $lease;
-                update_lease($$scope{'id'}, encode_json \%leases);
-                $leases{'scope'}{'leases_attributes'} = [];
-            } else {
-              foreach my $sl_hash (@saved_leases) {
-                if ($$sl_hash{'ip'} eq $ip) { # lease exists in DB
-                  print STDERR "update lease $ip if changed\n";
-                  # see if it needs to be updated
-                } else {
-                  print STDERR "create lease $ip\n";
-                  # create new lease
-                  $lease = { ip => $ip, mask => $mask, name => $name, expiration => $expiration, kind => $kind, device_id => $$device{'id'} };
-                  push $leases{'scope'}{'leases_attributes'}, $lease;
-                  update_lease($$scope{'id'}, encode_json \%leases);
-                  $leases{'scope'}{'leases_attributes'} = [];
+            my $found;
+            foreach my $sl_array ($saved_leases[0]) {
+              foreach my $sl_hash (@$sl_array) {
+                if ($ip eq $$sl_hash{'ip'}) {
+                  $found = 'Y';
+                  my $update;
+                  if ($$sl_hash{'mask'} ne $mask) { $update = 'Y'; }
+                  elsif ($$sl_hash{'name'} ne $name) { $update = 'Y'; }
+                  elsif ($$sl_hash{'expiration'} ne $expiration) { $update = 'Y'; }
+                  elsif ($$sl_hash{'kind'} ne $kind) { $update = 'Y'; }
+                  elsif ($$sl_hash{'device_id'} ne $$device{'id'}) { $update = 'Y'; }
+                  if ($update eq 'Y') {
+                    print STDERR "lease $ip changed, updating.\n";
+                    $lease = { id => $id, ip => $ip, mask => $mask, name => $name, expiration => $expiration, kind => $kind, device_id => $$device{'id'} };
+                    push $leases{'scope'}{'leases_attributes'}, $lease;
+                    update_lease($$scope{'id'}, encode_json \%leases);
+                    $leases{'scope'}{'leases_attributes'} = [];
+                  }
+                  last;
                 }
               }
+              last if $found eq 'Y';
+            }
+            if ($found ne 'Y') {
+              print STDERR "Create lease $ip\n";
+              $lease = { ip => $ip, mask => $mask, name => $name, expiration => $expiration, kind => $kind, device_id => $$device{'id'} };
+              push $leases{'scope'}{'leases_attributes'}, $lease;
+              update_lease($$scope{'id'}, encode_json \%leases);
+              $leases{'scope'}{'leases_attributes'} = [];
             }
           }
-          #print $OUTPUT "\"$dhcpmac\",\"$mon/$mday/$year\",\"$dhcphost\",\"$scopedesc\",\"$ip\",\"$lease\",\"$vendor\",\"$nbmac\",\"$nbhost\",\"$alive\",\"$encase\",\"$cshare\",\"$sav\",\"$epo\",\"$port80\",\"$server\",\"$sccm\"\n";
         }
       }
     }
@@ -324,7 +353,7 @@ sub get_leases {
       print "HTTP GET leases error message: ", $resp->message, "\n";
   }
   my @array = decode_json($resp->decoded_content);
-  return $array[0][0];
+  return $array[0];
 }
 
 sub update_lease {

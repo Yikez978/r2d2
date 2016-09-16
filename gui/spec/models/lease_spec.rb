@@ -22,6 +22,11 @@ RSpec.describe Lease, type: :model do
       lease = Lease.new(ip: '1.1.1.1', device: @device, expiration: nil)
       expect(lease).to be_invalid
     end
+    it 'if the ip is duplicate' do
+      Lease.create(ip: '1.1.1.1', device: @device, expiration: Faker::Time)
+      duplicate_lease = Lease.new(ip: '1.1.1.1', device: @device, expiration: Faker::Time)
+      expect(duplicate_lease).to be_invalid
+    end
   end
   it 'is valid if IP, device, expiration are defined' do
     lease = Lease.new(ip: '1.1.1.1', device: @device, expiration: Faker::Time)
