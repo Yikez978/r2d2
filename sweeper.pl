@@ -1,7 +1,6 @@
 #! /usr/bin/perl
 # Written by Eric McCullough
 # TODO:
-#   thread support?
 #   MAC OUI lookup
 #   loop every x seconds/minutes/hours
 #   ICMP ping option
@@ -23,12 +22,12 @@ use Net::Libdnet::Arp; # for reading arp table
 
 use c3p0; # shared subroutines
 my ($year, $mon, $mday, $hour, $min);
-my ($my_ip, $network_ip, $ip, $mask, $cidr, $gateway, @ips, %arpt);
+my ($my_ip, $my_mac, $network_ip, $ip, $mask, $cidr, $gateway, @ips, %arpt);
 
 my $if = IO::Interface::Simple->new('eth0');
 $my_ip = $if->address;
 $mask = $if->netmask;
-# $my_mac = $if->hwaddr;
+$my_mac = $if->hwaddr;
 $cidr = Net::Netmask->new($if->address, $if->netmask);
 
 my $route_table = Net::Libdnet::Route->new;
@@ -37,14 +36,13 @@ $gateway = $route_table->get('0.0.0.0');
 my $set = Net::CIDR::Set->new("$cidr");
 if ($gateway eq '') {
   $gateway = 'undefined';
-} else {
-#  $set->remove($gateway);
 }
+# should we remove the gateway from the scan? or make it optional?
 
 print STDERR "My IP is $my_ip\nThe mask is $mask\nThe netblock in CIDR notation is $cidr\nThe gateway is $gateway\n";
 $set->remove("$my_ip/32");
+
 my $iter = $set->iterate_addresses;
-# make array of IP's mainly so we can remove the network and broadcast IP's
 while ( my $ip = $iter->() ) {
   push @ips, $ip;
 }
@@ -60,7 +58,6 @@ print STDERR "Looking for possible rogue hosts at $hour:$min of $mon/$mday/$year
 my $p = Net::Ping->new("syn", 1); # the second parm is timeout in seconds
 $p->{port_number} = 4445; # doesn't matter what port, we just want the ARP response.
 foreach my $ip (@ips) {
-#  print STDERR "$ip\n";
   $p->ping($ip);
 }
 
@@ -83,6 +80,7 @@ while (my ($host,$rtt,$ip) = $p->ack) {
 $p->close();
 
 my $json = '{"sweep":{"description":"' . "$cidr" . '","nodes_attributes":[';
+$json .= '{"ip":"' . $my_ip . '","mac":"' . $my_mac . '"},'; # include us in the sweep.
 foreach my $ip (keys(%arpt)) {
 #  print STDOUT "{ ip: '$ip', mac: '$arpt{$ip}'}\n";
   $json .= '{"ip":"' . $ip . '","mac":"' . $arpt{$ip} . '"},';
