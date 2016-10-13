@@ -68,13 +68,13 @@ FactoryGirl.define do
       lease_count 1
     end
     after(:create) do |scope, evaluator|
-      if evaluator.lease_count > 0
+      evaluator.lease_count.times do
         node_ip = ''
         loop do
           node_ip = ip_array.sample
           break if !Lease.find_by ip: node_ip
         end
-        evaluator.lease_count.times  { scope.leases << create(:lease, ip: node_ip) }
+        scope.leases << create(:lease, ip: node_ip) 
         #sweeper.create(ip: ip_array.sample, description: evaluator.description)
       end
     end

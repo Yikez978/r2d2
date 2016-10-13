@@ -8,4 +8,16 @@ class Node < ActiveRecord::Base
                   format: { with: VALID_MAC_REGEX }
   validates :ip, presence: true,
                  format: { :with => Resolv::IPv4::Regex }
+
+  def vendor
+    trimmed_mac = self.mac.gsub(/[-:]/,'')
+    begin
+      vendor_name = Vendor.find_by(oui: trimmed_mac[0..5]).name
+    rescue
+      if !vendor_name
+        vendor_name = 'UNKNOWN'
+      end
+    end
+    vendor_name
+  end
 end

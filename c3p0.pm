@@ -120,7 +120,7 @@ sub loadVendorCodes {
   # vendor.txt is for identifying the OUI of the MAC
   if (open (VENDOR, "vendor.txt")) {
     print STDERR "Loading vendor codes\n";
-    $count = 0;
+    my $count = 0;
     while (<VENDOR>) {
       chomp(($vendor, $desc) = split(/\,/,$_,2));
       $vendor{$vendor} = $desc;
@@ -137,7 +137,7 @@ sub getvendor {
   if (length($mac) eq 17) {
     $mac = uc $mac;
     $mac =~ s/\.//;
-    ($vendor, undef) = substr $mac,0,8;
+    my ($vendor, undef) = substr $mac,0,8;
     if (exists $vendor{$vendor}) { return $vendor{$vendor}; }
     else { return "UNKNOWN"; }
   } else {
@@ -147,19 +147,21 @@ sub getvendor {
 
 sub updatevendorlist {
   use LWP::Simple;
-  $content = get("http://standards.ieee.org/regauth/oui/oui.txt");
+  my $OUT;
+  my $content = get("http://standards.ieee.org/regauth/oui/oui.txt");
     die "Couldn't get it!" unless defined $content;
-  @lines = split /\n/,$content;
+  my @lines = split /\n/,$content;
   if (-e "vendor.txt") {
     if (-e "vendor.old") { unlink "vendor.old"; }
     system "ren vendor.txt vendor.old";
   }
-  open (OUT, ">vendor.txt") or die;
-  foreach $line (@lines) {
+  open ($OUT, ">vendor.txt") or die;
+  foreach my $line (@lines) {
     next unless $line =~ /\(hex/;
-    ($oui, $vendor) = split /   \(hex\)\t\t/,$line;
-    print OUT "$oui,$vendor\n";
+    my ($oui, $vendor) = split /   \(hex\)\t\t/,$line;
+    print $OUT "$oui,$vendor\n";
   }
+  close $OUT
 }
 
 1;

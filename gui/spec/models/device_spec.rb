@@ -54,4 +54,15 @@ RSpec.describe Device, type: :model do
     list = Device.find(device.id).list
     expect(list.name).to eq 'Unassigned'
   end
+
+  it 'does a Vendor lookup' do
+    Vendor.create(name: 'The Republic', oui: '001ff3')
+    device = Device.create(mac: '00:1f:f3:cd:62:f2', list: @list)
+    expect(device.vendor).to eq('The Republic')
+  end
+
+  it 'returns UNKNOWN if vendor not found' do
+    device = Device.create(mac: '00:1f:f3:cd:62:f2', list: @list)
+    expect(device.vendor).to eq('UNKNOWN')
+  end
 end

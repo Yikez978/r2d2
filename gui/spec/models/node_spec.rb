@@ -37,4 +37,14 @@ RSpec.describe Node, type: :model do
     @node = Node.new(mac: '00:1f:f3:cd:62:d2', ip: '192.168.1.1')
     expect(@node).to be_valid
   end
+  it 'does a Vendor lookup' do
+    Vendor.create(name: 'The Republic', oui: '001ff3')
+    node = Node.create(mac: '00:1f:f3:cd:62:f2', ip: '192.168.1.1')
+    expect(node.vendor).to eq('The Republic')
+  end
+
+  it 'returns UNKNOWN if vendor not found' do
+    node = Node.create(mac: '00:1f:f3:cd:62:f2', ip: '192.168.1.1')
+    expect(node.vendor).to eq('UNKNOWN')
+  end
 end

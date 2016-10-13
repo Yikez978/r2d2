@@ -60,10 +60,9 @@ RSpec.describe 'r2d2', type: :feature do
         it 'should have Vendor' do
           expect(page.all('th')[5]).to have_content('Vendor')
         end
-
       end
       describe 'data row' do
-        it 'should have a link to display the details' do
+        it 'has a link to display the details' do
           expect(page.find_link(@server.scopes[0].leases[0].device.mac, "/leases/#{@server.scopes[0].leases[0].id}"))
         end
         describe 'status column displays' do
@@ -154,20 +153,23 @@ RSpec.describe 'r2d2', type: :feature do
             it 'with an i if hovered over'
           end
         end
-        it 'should have DHCP name' do
+        it 'has DHCP name' do
           expect(page.all('td')[2]).to have_content(@server.scopes[0].leases[0].name)
         end
-        it 'displaying the IP' do
+        it 'displays the IP' do
           expect(page.all('td')[3]).to have_content(@server.scopes[0].leases[0].ip)
         end
-        it 'displaying the lease expiration datetime' do
+        it 'displays the lease expiration datetime' do
           expect(page.all('td')[4]).to have_content(@server.scopes[0].leases[0].expiration)
+        end
+        it 'displays the vendor OUI for the MAC' do
+          expect(page.all('td')[5]).to have_content(@server.scopes[0].leases[0].device.vendor)
         end
       end
     end
     describe 'has pagination controls when table has more than 10 rows' do
       before(:each) do
-        10.times  { @server.scopes[0].leases << FactoryGirl.create(:lease) }
+        @server.scopes << FactoryGirl.create(:scope, lease_count: 10)
         visit '/r2d2'
       end
       it do
