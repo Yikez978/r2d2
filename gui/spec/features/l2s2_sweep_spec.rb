@@ -83,14 +83,17 @@ RSpec.describe "l2s2 sweep", type: :feature do
       it 'should be sortable by MAC'
       it 'should be sortable by IP'
       describe 'headings' do
-        it 'should have thead' do
+        it 'has thead' do
           expect(page).to have_selector('thead')
         end
-        it 'should have MAC' do
+        it 'has MAC' do
           expect(page.all('th')[0]).to have_content('MAC')
         end
-        it 'should have IP' do
+        it 'has IP' do
           expect(page.all('th')[1]).to have_content('IP')
+        end
+        it 'has vendor' do
+          expect(page.all('th')[2]).to have_content('Vendor')
         end
       end
       describe 'data row' do
@@ -102,6 +105,9 @@ RSpec.describe "l2s2 sweep", type: :feature do
         end
         it 'should display the IP' do
           expect(page.all('td')[1]).to have_content(sweep.nodes[0].ip)
+        end
+        it 'should display the Vendor' do
+          expect(page.all('td')[2]).to have_content(sweep.nodes[0].vendor)
         end
       end
     end
