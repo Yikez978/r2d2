@@ -26,6 +26,11 @@ RSpec.describe Vendor, type: :model do
       @vendor = Vendor.new(name: 'company', oui: '12345G')
       expect(@vendor).to be_invalid
     end
+    it 'not unique' do
+      Vendor.create(name: 'company', oui: 'abcdef')
+      @vendor = Vendor.new(name: 'company', oui: 'abcdef')
+      expect(@vendor).to be_invalid
+    end
   end
   describe 'is valid if' do
     it 'has a name and oui of 6 hex char' do
