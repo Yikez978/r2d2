@@ -12,7 +12,7 @@ class Node < ActiveRecord::Base
   def vendor
     trimmed_mac = self.mac.gsub(/[-:]/,'')
     begin
-      vendor_name = Vendor.find_by(oui: trimmed_mac[0..5]).name
+      vendor_name = Vendor.find_by(oui: trimmed_mac[0..5].upcase).name
     rescue
       if !vendor_name
         vendor_name = 'UNKNOWN'

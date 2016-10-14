@@ -38,7 +38,7 @@ RSpec.describe Node, type: :model do
     expect(@node).to be_valid
   end
   it 'does a Vendor lookup' do
-    Vendor.create(name: 'The Republic', oui: '001ff3')
+    Vendor.create(name: 'The Republic', oui: '001FF3')
     node = Node.create(mac: '00:1f:f3:cd:62:f2', ip: '192.168.1.1')
     expect(node.vendor).to eq('The Republic')
   end
