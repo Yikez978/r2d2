@@ -48,6 +48,10 @@ foreach my $server_hash (@dhcpservers) {
   my ($scope, $ip, $mask, $desc, $comment);
 
   while (<$SCOPES>) { # load DHCP scopes
+    if (/ERROR: Failed to open connection - NT_STATUS_LOGON_FAILURE/) {
+      print STDERR "ERROR: Failed to open connection - NT_STATUS_LOGON_FAILURE\n";
+      next;
+    }
     if (/add scope/) {
       if (defined $ip) {
         my $found;
@@ -194,7 +198,7 @@ foreach my $server_hash (@dhcpservers) {
                   elsif ($$sl_hash{'device_id'} ne $$device{'id'}) { $update = 'Y'; }
                   if ($update eq 'Y') {
                     print STDERR "lease $ip changed, updating.\n";
-                    $lease = { id => $id, ip => $ip, mask => $mask, name => $name, expiration => $expiration, kind => $kind, device_id => $$device{'id'} };
+                    $lease = { id => $$sl_hash{'id'}, ip => $ip, mask => $mask, name => $name, expiration => $expiration, kind => $kind, device_id => $$device{'id'} };
                     push $leases{'scope'}{'leases_attributes'}, $lease;
                     update_lease($$scope{'id'}, encode_json \%leases);
                     $leases{'scope'}{'leases_attributes'} = [];
@@ -268,7 +272,7 @@ sub get_dhcp_servers {
   my $resp = $ua->request($req);
   if ($resp->is_success) {
       my $message = $resp->decoded_content;
-      print "get_dhcp_servers received reply: $message\n";
+      #print "get_dhcp_servers received reply: $message\n";
   } else {
       print "HTTP GET error code: ", $resp->code, "\n";
       print "HTTP GET error message: ", $resp->message, "\n";
@@ -287,7 +291,7 @@ sub get_scopes {
   my $resp = $ua->request($req);
   if ($resp->is_success) {
       my $message = $resp->decoded_content;
-      print "get scopes received reply: $message\n";
+      #print "get scopes received reply: $message\n";
   } else {
       print "HTTP GET scopes error code: ", $resp->code, "\n";
       print "HTTP GET scopes error message: ", $resp->message, "\n";
@@ -311,7 +315,7 @@ sub update_scope {
   my $resp = $ua->request($req);
   if ($resp->is_success) {
       my $message = $resp->decoded_content;
-      print "update scope received reply: $message\n";
+      #print "update scope received reply: $message\n";
   } else {
       print "HTTP PUT scope error code: ", $resp->code, "\n";
       print "HTTP PUT scope error message: ", $resp->message, "\n";
@@ -328,7 +332,7 @@ sub get_device { # find or create device
   my $resp = $ua->request($req);
   if ($resp->is_success) {
       my $message = $resp->decoded_content;
-      print "get device received reply: $message\n";
+      #print "get device received reply: $message\n";
   } else {
       print "HTTP GET device error code: ", $resp->code, "\n";
       print "HTTP GET device error message: ", $resp->message, "\n";
@@ -347,7 +351,7 @@ sub get_leases {
   my $resp = $ua->request($req);
   if ($resp->is_success) {
       my $message = $resp->decoded_content;
-      print "get leases received reply: $message\n";
+      #print "get leases received reply: $message\n";
   } else {
       print "HTTP GET leases error code: ", $resp->code, "\n";
       print "HTTP GET leases error message: ", $resp->message, "\n";
@@ -370,7 +374,7 @@ sub update_lease {
   my $resp = $ua->request($req);
   if ($resp->is_success) {
       my $message = $resp->decoded_content;
-      print "update lease received reply: $message\n";
+      #print "update lease received reply: $message\n";
   } else {
       print "HTTP PUT lease error code: ", $resp->code, "\n";
       print "HTTP PUT lease error message: ", $resp->message, "\n";
@@ -395,7 +399,7 @@ sub update_db {
   my $resp = $ua->request($req);
   if ($resp->is_success) {
       my $message = $resp->decoded_content;
-      print "Received reply: $message\n";
+      #print "Received reply: $message\n";
   } else {
       print "HTTP POST error code: ", $resp->code, "\n";
       print "HTTP POST error message: ", $resp->message, "\n";

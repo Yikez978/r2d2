@@ -76,7 +76,8 @@ RSpec.describe "API Scopes " do
           lease_id = lease.id
           put "http://api.example.com/api/scopes/#{scope.id}",
             { scope:
-              { leases_attributes:
+              { id: scope.id, 
+                leases_attributes:
                 [{ id: lease_id, ip: '2.1.1.0', expiration: '2', kind: 'D', name: 'fred', mask: '255.255.255.2', device_id: device2.id }]
               }
             }.to_json,
