@@ -148,8 +148,24 @@ RSpec.describe 'r2d2', type: :feature do
             end
           end
           describe 'a fingerprint icon' do
-            it 'with a checkmark if all fingerprint fields are set'
-            it 'with an x if not all the fingerprint fields are set'
+            it 'with a checkmark if the fingerprint field is set to one' do
+              @server.scopes[0].leases[0].device.fingerprint = 1
+              @server.scopes[0].leases[0].device.save
+              visit '/r2d2'
+              within(page.all("f.#{@server.scopes[0].leases[0]}")[0]) do
+                element = all('span')[0]
+                expect(element['class']).to match(/flaticon-fingerprint21/)
+              end
+            end
+            it 'with an x if the fingerprint field is set to zero' do
+              @server.scopes[0].leases[0].device.fingerprint = 0
+              @server.scopes[0].leases[0].device.save
+              visit '/r2d2'
+              within(page.all("f.#{@server.scopes[0].leases[0]}")[0]) do
+                element = all('span')[0]
+                expect(element['class']).to match(/flaticon-fingerprint20/)
+              end
+            end
             it 'with an i if hovered over'
           end
         end
@@ -199,7 +215,7 @@ RSpec.describe 'r2d2', type: :feature do
         click_link "#{@server.scopes[0].leases[0].device.mac}"
         expect(find_field('device_notes').value).to eq('This is a test')
       end
-      it 'fingerprint'
+      it 'fingerprint details'
       it 'model'
       it 'purpose'
       it 'department'

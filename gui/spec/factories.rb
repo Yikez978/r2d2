@@ -19,6 +19,7 @@ FactoryGirl.define do
     mac  { 6.times.map{ rand(256) }.map{ |d| '%02x' % d }.join(':').to_s }
     list { List.find_by_name('Unassigned') }
     notes Faker::Lorem.sentence(3)
+    fingerprint nil
   end
 
   factory :node do

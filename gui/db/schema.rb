@@ -11,17 +11,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161013210800) do
+ActiveRecord::Schema.define(version: 20161023152712) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "devices", force: :cascade do |t|
     t.string   "mac"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
     t.integer  "list_id"
     t.string   "notes"
+    t.integer  "fingerprint"
   end
 
   add_index "devices", ["list_id"], name: "index_devices_on_list_id", using: :btree

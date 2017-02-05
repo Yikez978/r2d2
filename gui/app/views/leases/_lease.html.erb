@@ -26,8 +26,16 @@
         </li>
         <% end %>
       </ul>
-      <span id='F<%=lease.id%>' class="fingerprint flaticon-fingerprint21"></span>
     </div>
+      <% if lease.device.fingerprint == nil %>
+        <% fp = 'flaticon-fingerprint-with-question-mark' %>
+      <% elsif lease.device.fingerprint == 0 %>
+        <% fp = 'flaticon-fingerprint26' %>
+      <% elsif lease.device.fingerprint == 1 %>
+        <% fp = 'flaticon-fingerprint21' %>
+      <% else fp = 'flaticon-fingerprint-with-question-mark' %>
+      <% end %>
+    <span id='F<%=lease.id%>' class="fingerprint <%= fp %>"></span>
   </td>
   <td><%=lease.name%></td>
   <td><%=lease.ip%></td>
