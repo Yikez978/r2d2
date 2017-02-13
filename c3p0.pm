@@ -70,17 +70,17 @@ sub printandpush { #### replace with TEE
 
 sub pingport {
   use Net::Ping;
-
-  $port = shift;
-  undef $result;
+  my $ip = shift;
+  my $port = shift;
+  my $result = undef;
   unless ($port > 0 && $port < 65546) {
     print STDERR "Bad port specified for ping test: $port\n";
   } else {
-    $p = Net::Ping->new("syn",2);
+    my $p = Net::Ping->new("syn",2);
     $p->port_number($port);
     $p->ping($ip);
-    while (($host,$rtt,$fip) = $p->ack) {
-      print "HOST: $dnsname [$ip] ACKed port $port in $rtt seconds.\n" if $verbose;
+    while (my ($host, $rtt, $fip) = $p->ack) {
+      #print "HOST: [$ip] ACKed port $port in $rtt seconds.\n" if $verbose;
       $result = 'Y';
     }
     $p->close();
@@ -107,6 +107,11 @@ sub pinghost {
 
 sub gettime {
   ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
+  $sec = '';  # unused
+  $mday = ''; # unused
+  $wday = ''; # unused
+  $yday = ''; # unused
+  $isdst = ''; # unused
   $year += 1900;
   $mon += 1;
   if ($mon < 10) { $mon = "0" . $mon; }

@@ -57,19 +57,16 @@ RSpec.describe "API Devices" do
         end
       end
     end
-    describe 'get /api/device/:mac' do
-      let!(:list) { FactoryGirl.create(:list, name:'Unassigned') }
-      describe 'when unsuccessful' do
-        it 'should NOT create a device' do
-          device_count_before = Device.count
-          get "http://api.example.com/api/devices/blah"
-          expect(Device.count).to eq(device_count_before)
-        end
-  
-        it 'returns status 422' do
-          get "http://api.example.com/api/devices/blah"
-          expect(status).to eq(422)
-        end
+    describe 'when unsuccessful' do
+      it 'should NOT create a device' do
+        device_count_before = Device.count
+        get "http://api.example.com/api/devices/blah"
+        expect(Device.count).to eq(device_count_before)
+      end
+
+      it 'returns status 422' do
+        get "http://api.example.com/api/devices/blah"
+        expect(status).to eq(422)
       end
     end
   end

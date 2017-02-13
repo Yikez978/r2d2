@@ -28,7 +28,7 @@ if ($showhelp) {
   &showhelp;
 }
 
-($year, $mon, $mday, $hour, $min) = &gettime;
+($year, $mon, $mday, $hour, $min) = gettime();
 &printandpush("Looking for possible rogue hosts at $hour:$min of $mon/$mday/$year\n\n");
 my $totalcount = my $foundcount = 0; # for counts of total hosts in dhcp, count of found possible rogue hosts.
 my $total_scopes = 0;
@@ -240,7 +240,7 @@ foreach my $mac (keys %mac_list) {
   print STDERR "$mac is a duplicate MAC address\n" if $mac_list{$mac} > 1;
 }
 
-($year, $mon, $mday, $hour, $min) = &gettime;
+($year, $mon, $mday, $hour, $min) = gettime();
 print STDERR "Completed at $hour:$min of $mon/$mday/$year\n";
 
 ##########################
