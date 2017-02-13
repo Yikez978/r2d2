@@ -1,12 +1,15 @@
 module API
+  #
+  # Not in use?
+  #
   class NodesController < ApplicationController
     def index
-      devices = Node.all
+      nodes = Node.all
       render json: nodes
     end
     
     def show
-      device = Device.find(params[:id])
+      node = Device.find(params[:id])
       render json: node
     end
 

@@ -29,10 +29,11 @@ my $cshare;
 my %SHARE; # used in call to NetShareGetInfo
 if ($pingable eq "Y") {
   if (NetShareGetInfo( "c\$", \%SHARE, $host_ip )) { $cshare = 'Y'; } # check for access to the c$ share.
-  ################ Need equivalent command for NBTstat in linux... #####################
+  ################ equivalent command for 'nbtstat -A <host IP>' in linux... #####################
+  # in pkg samba-common-bin
   #  alias nbtstat='nmblookup -S -U <server> -R'
-  # part of samba
-  open(NBTSTAT, "nbtstat -A $host_ip|") or warn "NBTSTAT command failed\n";
+  
+  open(NBTSTAT, "nmblookup -A $host_ip|") or warn "nmblookup command failed\n";
   if (NBTSTAT) {
     while (<NBTSTAT>) {
       if (/MAC Address = (.+)/) {
@@ -40,7 +41,8 @@ if ($pingable eq "Y") {
         chop $nbmac;
         $found = 1;
         print STDERR "found\n" if $verbose;
-      } elsif (/\s*(.+)\s+<00>  UNIQUE/) {
+      #} elsif (/\s*(.+)\s+<00>  UNIQUE/) { # windows nbtstat
+      } elsif (/\s*(.+)\s+<00>\s+B/) { # linux nmblookup
         $nbhost = uc($1);
         $nbhost =~ s/[^\w,.-~\$]//g;
       }

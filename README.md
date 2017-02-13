@@ -7,15 +7,13 @@ The need to detect rogue devices on a network is part of the first control liste
 The Remote Rogue Device Detector gathers data from various sources to compile a list
 of potential rogue devices.
 
-Originally designed to run on a Windows network, it uses:
-* DHCP
-* netsh.exe (to pull the dhcp leases)
-* Active Directory
-* dsquery.exe (to pull AD entries)
+Originally designed to run on a Windows network, it accesses:
+* Microsoft DHCP - netsh.exe (to pull the dhcp leases)
+* Active Directory - dsquery.exe (to pull AD entries)
 * SCCM
-* NBTStat.exe
+* NBTStat.exe info - nmblookup on linux
 
-It can check for open ports to see if it appears to be running agents or services you might
+It checks for open/closed ports to see if it appears to be running agents or services you might
 expect on a valid device.
 
 Also resolves the vendor OUI from the MAC address to aid in tracking down the device.
@@ -23,7 +21,15 @@ Also resolves the vendor OUI from the MAC address to aid in tracking down the de
 The found devices can be whitelisted or blacklisted to indicate that they have been previously
 investigated and their status determined.
 
+Originally run from a command prompt and produced text output for import into
+a spreadsheet, now has a web front end.
+
 ##Setup
+The previous r2d2.pl has been split into smaller, more focused scripts.
+d1s2.pl pulls the DHCP leases.
+sweeper.pl scans the layer two network the device is in.
+fingerprinter.pl checks the ports, Active directory status, and netBIOS over TCP/IP info.
+
 Edit r2d2.pl to:
 * define the DHCP server(s) to poll.
 * define the AD domain controllers and domain which house the computer elements.

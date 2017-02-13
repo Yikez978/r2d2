@@ -1,0 +1,115 @@
+#### install rpi image
+# insert card into reader and connect to USB
+df -h
+Filesystem                                                        Size   Used  Avail Capacity   iused     ifree %iused  Mounted on
+/dev/disk0s2                                                     297Gi  223Gi   74Gi    76%  58540285  19392617   75%   /
+devfs                                                            190Ki  190Ki    0Bi   100%       659         0  100%   /dev
+map -hosts                                                         0Bi    0Bi    0Bi   100%         0         0  100%   /net
+map auto_home                                                      0Bi    0Bi    0Bi   100%         0         0  100%   /home
+/dev/disk1s2                                                     931Gi  216Gi  715Gi    24%  56593752 187512914   23%   /Volumes/External
+//dad@FamiMac._afpovertcp._tcp.local/mami%60s%20Public%20Folder  931Gi  479Gi  452Gi    52% 125637766 118468900   51%   /Volumes/mami's Public Folder
+/dev/disk3s1                                                      56Mi   20Mi   36Mi    36%       512         0  100%   /Volumes/boot <------------this one was formatted before
+# find the card reader and unmount it
+sudo umount /dev/disk3s1
+# image the card using the rdisk device and number seen above, rdisk3 in the above example
+sudo dd bs=1m if=/Users/eric_mccullough/Desktop/job/Full\ Visibility/pi/2015-05-05-raspbian-wheezy.img of=/dev/rdisk
+# unmount it when done
+sudo umount /dev/disk3s1
+
+#### first-time, one-time config
+sudo raspi-config
+# expand fs
+# change pwd
+# change hostname
+# reboot
+
+####  set proxy if needed
+export http_proxy=http://192.168.100.254:8080
+export https_proxy=http://192.168.100.254:8080
+
+#update the local apt repo to the latest
+sudo apt-get update
+
+#Install postgresql server and server-dev
+sudo apt-get install postgresql postgresql-server-dev-9.1
+#create user r2d2
+#make r2d2 pg superuser
+
+psql
+  create database r2d2_production;
+  grant all privileges on database r2d2_production to r2d2;
+  \q
+after installing ruby/rails and cloning git repo
+rake db:create
+rake db:schema:load
+
+
+# install rvm and rails
+rvm install ruby-2
+gem install rails
+# be in the directory you want the r2d2 directory installed into then
+git clone https://github.com/ericmccullough/r2d2.git
+cd r2d2
+git pull origin gui
+cd gui
+#
+# for testing, may need to install QT for webkit.  Using homebrew:
+brew tap homebrew/versions
+brew install qt55
+brew link --force qt55
+#
+#
+# on OS X, install xcode
+#
+bundle install
+rake secret
+# generates a long string, copy and append to next cmd
+export SECRET_KEY_BASE=
+
+#### To run in production:
+rake db:migrate RAILS_ENV=production
+RAILS_ENV=production bin/rake assets:precompile
+
+change config/environments/production.rb
+  config.serve_static_files = ENV['RAILS_SERVE_STATIC_FILES'].present?
+  to
+  config.serve_static_files = true
+to have Rails serve static files
+
+##### ssh tunnel to rpi.  set the IP to the rpi's IP
+ssh pi@192.168.100.252 -L 4567:localhost:3000
+
+######## heroku notes ########
+cd strong-stone-3754/
+cp -Rf ~/code/perl/r2d2/gui/* .
+#git checkout Gemfile Gemfile.lock config/database.yml # used to need this when using sqlite3 in dev and test
+# make sure to have public/assets in the repo for heroku
+RAILS_ENV=production bundle exec rake assets:precompile
+git add .
+git commit -m 'Something'
+git push
+# only need these if changes made to DB
+heroku run bash
+rake db:migrate
+# to clear the DB and reload the sample data
+rake db:reset
+rake db:populate
+# to quit bash
+exit
+
+##### perl modules for sweeper
+sudo apt-get install libjson-perl
+sudo apt-get install libnet-pcap-perl
+sudo apt-get install libnetpacket-perl?
+sudo apt-get install libnet-libdnet-perl
+in perl -MCPAN -e shell
+  # accept defaults for first time run.
+  install ANDYA/Net-CIDR-Set-0.13.tar.gz
+  install M/MU/MUIR/modules/Net-Netmask-1.9022.tar.gz
+  notest install T/TI/TIMPOTTER/Net-PcapUtils-0.01.tar.gz?
+  install L/LD/LDS/IO-Interface-1.09.tar.gz
+  install E/ET/ETHER/libwww-perl-6.15.tar.gz
+
+# may be able to use samba-client to replace Win32::NetResource  # cpan can install Win32::NetResource maybe
+# http://www.vinidox.com/ldap/querying-an-ldap-server-from-the-command-line-with-ldap-utils-ldapsearch-ldapadd-ldapmodify/
+# https://www.aldeid.com/wiki/Winexe
